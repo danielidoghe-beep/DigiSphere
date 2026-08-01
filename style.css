@@ -335,3 +335,159 @@ body.dark .hero p,
 body.dark .card p{
     color:#cfcfcf;
 }
+/* ==========================
+   SERVICES
+========================== */
+
+.services{
+    padding:90px 20px;
+    max-width:650px;
+    margin:auto;
+}
+
+.services-heading span{
+    color:#4E8D00;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:2px;
+}
+
+.services-heading h2{
+    margin-top:10px;
+    font-size:42px;
+    font-weight:900;
+    line-height:1.1;
+}
+
+.services-heading p{
+    margin-top:18px;
+    color:#666;
+    font-size:17px;
+    line-height:1.8;
+    margin-bottom:60px;
+}
+
+.service-card{
+    position:relative;
+    background:#fff;
+    border:1px solid #ededed;
+    border-radius:18px;
+    padding:30px;
+    margin-bottom:35px;
+    transition:.3s;
+}
+
+.service-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 15px 35px rgba(0,0,0,.08);
+}
+
+.service-number{
+    font-size:54px;
+    color:#ececec;
+    font-weight:900;
+    margin-bottom:20px;
+}
+
+.service-image{
+    width:120px;
+    height:120px;
+    margin:0 auto 25px;
+    border-radius:50%;
+    background:#f7f7f7;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.service-image i{
+    font-size:55px;
+    color:#4E8D00;
+}
+
+.service-card h3{
+    font-size:30px;
+    margin-bottom:15px;
+}
+
+.service-card p{
+    color:#666;
+    line-height:1.8;
+    font-size:17px;
+}
+
+.tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:25px 0;
+}
+
+.tags span{
+    padding:8px 15px;
+    background:#f3f3f3;
+    border-radius:40px;
+    font-size:13px;
+}
+
+.service-card a{
+    text-decoration:none;
+    color:#4E8D00;
+    font-weight:800;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+}
+
+.coming{
+    position:absolute;
+    top:25px;
+    right:25px;
+    background:#edf7df;
+    color:#4E8D00;
+    padding:8px 16px;
+    border-radius:30px;
+    font-size:11px;
+    font-weight:700;
+}
+
+@media(max-width:480px){
+
+.services{
+    padding:70px 20px;
+}
+
+.services-heading h2{
+    font-size:28px;
+}
+
+.services-heading p{
+    font-size:15px;
+}
+
+.service-card{
+    padding:22px;
+}
+
+.service-number{
+    font-size:42px;
+}
+
+.service-image{
+    width:90px;
+    height:90px;
+}
+
+.service-image i{
+    font-size:42px;
+}
+
+.service-card h3{
+    font-size:24px;
+}
+
+.service-card p{
+    font-size:15px;
+}
+
+}
