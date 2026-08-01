@@ -1,4 +1,9 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+// ==========================================
+// DigiSphere Register Page - Part 1
+// ==========================================
+
+// Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 import {
     getAuth,
@@ -6,303 +11,395 @@ import {
     GoogleAuthProvider,
     signInWithPopup,
     updateProfile
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
 import {
     getFirestore,
     doc,
     setDoc,
     serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+// ==========================================
+// Firebase Config
+// ==========================================
 
 const firebaseConfig = {
-    // Paste your Firebase config here
+    apiKey: "AIzaSyDnpsEIlXwPLSCJAGMS7feM2JMhmxzCCfs",
+    authDomain: "digisphere-66fdf.firebaseapp.com",
+    projectId: "digisphere-66fdf",
+    storageBucket: "digisphere-66fdf.firebasestorage.app",
+    messagingSenderId: "834194884246",
+    appId: "1:834194884246:web:72672ca253c3d7dd9d24b7",
+    measurementId: "G-19QS4036V7"
 };
 
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
+
 const db = getFirestore(app);
+
 const provider = new GoogleAuthProvider();
 
-const form = document.getElementById("registerForm");
-const registerBtn = document.getElementById("registerBtn");
-const messageBox = document.getElementById("messageBox");
+// ==========================================
+// Elements
+// ==========================================
+
 const loader = document.getElementById("loader");
+
+const form = document.getElementById("registerForm");
+
+const registerBtn = document.getElementById("registerBtn");
 
 const googleBtn = document.getElementById("googleRegister");
 
-function showLoader() {
-    loader.style.display = "flex";
-}
+const messageBox = document.getElementById("messageBox");
 
-function hideLoader() {
-    loader.style.display = "none";
-}
+const themeToggle = document.getElementById("themeToggle");
+
+const password = document.getElementById("password");
+
+const togglePassword = document.getElementById("togglePassword");
+
+// ==========================================
+// Loading Screen
+// ==========================================
 
 window.addEventListener("load", () => {
-    setTimeout(hideLoader, 1200);
+
+    setTimeout(() => {
+
+        loader.style.opacity = "0";
+
+        setTimeout(() => {
+
+            loader.style.display = "none";
+
+        },300);
+
+    },1500);
+
 });
 
-function showMessage(text, success = false) {
+function showLoader(){
 
-    messageBox.style.display = "block";
+    loader.style.display="flex";
 
-    messageBox.textContent = text;
+    loader.style.opacity="1";
 
-    if (success) {
+}
 
-        messageBox.className = "success-message";
+// ==========================================
+// Theme
+// ==========================================
 
-    } else {
+if(localStorage.getItem("theme")==="dark"){
 
-        messageBox.className = "error-message";
+    document.body.classList.add("dark");
+
+    themeToggle.innerHTML='<i class="fa-solid fa-sun"></i>';
+
+}
+
+themeToggle.addEventListener("click",()=>{
+
+    document.body.classList.toggle("dark");
+
+    if(document.body.classList.contains("dark")){
+
+        localStorage.setItem("theme","dark");
+
+        themeToggle.innerHTML='<i class="fa-solid fa-sun"></i>';
+
+    }else{
+
+        localStorage.setItem("theme","light");
+
+        themeToggle.innerHTML='<i class="fa-solid fa-moon"></i>';
+
+    }
+
+});
+
+// ==========================================
+// Password Toggle
+// ==========================================
+
+togglePassword.addEventListener("click",()=>{
+
+    if(password.type==="password"){
+
+        password.type="text";
+
+        togglePassword.innerHTML='<i class="fa-regular fa-eye-slash"></i>';
+
+    }else{
+
+        password.type="password";
+
+        togglePassword.innerHTML='<i class="fa-regular fa-eye"></i>';
+
+    }
+
+});
+
+// ==========================================
+// Messages
+// ==========================================
+
+function showMessage(message,success=false){
+
+    messageBox.style.display="block";
+
+    messageBox.textContent=message;
+
+    if(success){
+
+        messageBox.className="success-message";
+
+    }else{
+
+        messageBox.className="error-message";
 
     }
 
 }
-// ===============================
-// EMAIL REGISTRATION
-// ===============================
+
+function clearMessage(){
+
+    messageBox.style.display="none";
+
+    messageBox.className="";
+
+    messageBox.textContent="";
+
+}
+// ==========================================
+// Email Registration
+// ==========================================
 
 form.addEventListener("submit", async (e) => {
 
     e.preventDefault();
 
-    registerBtn.disabled = true;
-    registerBtn.innerHTML = "Creating account...";
-
-    messageBox.style.display = "none";
-
-    const firstName = document.getElementById("firstName").value.trim();
-    const lastName = document.getElementById("lastName").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-
-    try {
-
-        const userCredential = await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-        );
-
-        const user = userCredential.user;
-
-        const fullName = `${firstName} ${lastName}`;
-
-        await updateProfile(user, {
-            displayName: fullName
-        });
-
-        await setDoc(doc(db, "users", user.uid), {
-
-            uid: user.uid,
-
-            name: fullName,
-
-            firstName: firstName,
-
-            lastName: lastName,
-
-            email: email,
-
-            wallet: 0,
-
-            photo: "",
-
-            provider: "email",
-
-            createdAt: serverTimestamp()
-
-        });
-
-        showMessage(
-            "Your account has successfully been created.",
-            true
-        );
-
-        registerBtn.innerHTML = "Create account";
-
-        setTimeout(() => {
-
-            showLoader();
-
-            setTimeout(() => {
-
-                window.location.href = "login.html";
-
-            }, 1500);
-
-        }, 1000);
-
-    }
-
-    catch (error) {
-
-        let message = error.message;
-
-        switch (error.code) {
-
-            case "auth/email-already-in-use":
-                message = "This email address is already registered.";
-                break;
-
-            case "auth/invalid-email":
-                message = "Please enter a valid email address.";
-                break;
-
-            case "auth/weak-password":
-                message = "Password must be at least 6 characters.";
-                break;
-
-            case "auth/network-request-failed":
-                message = "No internet connection.";
-                break;
-
-            default:
-                message = "Unable to create your account.";
-        }
-
-        showMessage(message, false);
-
-        registerBtn.disabled = false;
-        registerBtn.innerHTML = "Create account";
-
-    }
-
-});
-// ===============================
-// GOOGLE SIGN UP
-// ===============================
-
-googleBtn.addEventListener("click", async () => {
+    clearMessage();
 
     registerBtn.disabled = true;
 
-    googleBtn.disabled = true;
-
-    googleBtn.innerHTML = `
+    registerBtn.innerHTML = `
         <i class="fa-solid fa-spinner fa-spin"></i>
         Creating account...
     `;
 
-    messageBox.style.display = "none";
+    const firstName = document.getElementById("firstName").value.trim();
 
-    try {
+    const lastName = document.getElementById("lastName").value.trim();
 
-        const result = await signInWithPopup(auth, provider);
+    const email = document.getElementById("email").value.trim();
 
-        const user = result.user;
+    const userPassword = password.value;
 
-        // Use Google's display name if available,
-        // otherwise use the Gmail username before @
+    try{
 
-        let fullName = "";
-
-        if (user.displayName && user.displayName.trim() !== "") {
-
-            fullName = user.displayName;
-
-        } else {
-
-            fullName = user.email.split("@")[0];
-
-        }
-
-        const nameParts = fullName.trim().split(" ");
-
-        const firstName = nameParts[0];
-
-        const lastName = nameParts.slice(1).join(" ");
-
-        await setDoc(
-
-            doc(db, "users", user.uid),
-
-            {
-
-                uid: user.uid,
-
-                name: fullName,
-
-                firstName: firstName,
-
-                lastName: lastName,
-
-                email: user.email,
-
-                photo: user.photoURL || "",
-
-                provider: "google",
-
-                wallet: 0,
-
-                totalOrders: 0,
-
-                totalSpent: 0,
-
-                accountStatus: "active",
-
-                createdAt: serverTimestamp(),
-
-                lastLogin: serverTimestamp()
-
-            },
-
-            { merge: true }
-
+        const credential = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            userPassword
         );
+
+        const user = credential.user;
+
+        const fullName = `${firstName} ${lastName}`;
+
+        await updateProfile(user,{
+            displayName:fullName
+        });
+
+        await setDoc(doc(db,"users",user.uid),{
+
+            uid:user.uid,
+
+            firstName,
+
+            lastName,
+
+            name:fullName,
+
+            email:user.email,
+
+            photo:user.photoURL || "",
+
+            provider:"email",
+
+            wallet:0,
+
+            totalOrders:0,
+
+            totalSpent:0,
+
+            accountStatus:"active",
+
+            createdAt:serverTimestamp(),
+
+            lastLogin:serverTimestamp()
+
+        });
 
         showMessage(
-
             "Your account has been created successfully. Redirecting to Sign in...",
-
             true
-
         );
 
-        setTimeout(() => {
+        showLoader();
 
-            showLoader();
+        setTimeout(()=>{
 
-            setTimeout(() => {
+            window.location.href="login.html";
 
-                window.location.href = "login.html";
+        },2000);
 
-            }, 2000);
+    }catch(error){
 
-        }, 1200);
+        let message="Unable to create your account.";
 
-    }
+        switch(error.code){
 
-    catch (error) {
+            case "auth/email-already-in-use":
+                message="This email address is already registered.";
+                break;
 
-        let message = "Google sign up failed.";
+            case "auth/invalid-email":
+                message="Please enter a valid email address.";
+                break;
 
-        switch (error.code) {
-
-            case "auth/popup-closed-by-user":
-                message = "Google sign up was cancelled.";
+            case "auth/weak-password":
+                message="Password must be at least 6 characters.";
                 break;
 
             case "auth/network-request-failed":
-                message = "No internet connection.";
-                break;
-
-            case "auth/account-exists-with-different-credential":
-                message = "An account already exists with this email.";
+                message="No internet connection.";
                 break;
 
         }
 
-        showMessage(message, false);
+        showMessage(message,false);
 
-        registerBtn.disabled = false;
+        registerBtn.disabled=false;
 
-        googleBtn.disabled = false;
+        registerBtn.innerHTML="Create account";
 
-        googleBtn.innerHTML = `
+    }
+
+});
+
+// ==========================================
+// Google Registration
+// ==========================================
+
+googleBtn.addEventListener("click",async()=>{
+
+    clearMessage();
+
+    googleBtn.disabled=true;
+
+    googleBtn.innerHTML=`
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        Creating account...
+    `;
+
+    try{
+
+        const result=await signInWithPopup(auth,provider);
+
+        const user=result.user;
+
+        let fullName="";
+
+        if(user.displayName && user.displayName.trim()!==""){
+
+            fullName=user.displayName;
+
+        }else{
+
+            fullName=user.email.split("@")[0];
+
+        }
+
+        const names=fullName.split(" ");
+
+        const firstName=names[0];
+
+        const lastName=names.slice(1).join(" ");
+
+        await setDoc(doc(db,"users",user.uid),{
+
+            uid:user.uid,
+
+            firstName,
+
+            lastName,
+
+            name:fullName,
+
+            email:user.email,
+
+            photo:user.photoURL || "",
+
+            provider:"google",
+
+            wallet:0,
+
+            totalOrders:0,
+
+            totalSpent:0,
+
+            accountStatus:"active",
+
+            createdAt:serverTimestamp(),
+
+            lastLogin:serverTimestamp()
+
+        },{merge:true});
+
+        showMessage(
+            "Your account has been created successfully. Redirecting to Sign in...",
+            true
+        );
+
+        showLoader();
+
+        setTimeout(()=>{
+
+            window.location.href="login.html";
+
+        },2000);
+
+    }catch(error){
+
+        let message="Google sign up failed.";
+
+        switch(error.code){
+
+            case "auth/popup-closed-by-user":
+                message="Google sign up cancelled.";
+                break;
+
+            case "auth/network-request-failed":
+                message="No internet connection.";
+                break;
+
+            case "auth/account-exists-with-different-credential":
+                message="An account already exists with this email.";
+                break;
+
+        }
+
+        showMessage(message,false);
+
+        googleBtn.disabled=false;
+
+        googleBtn.innerHTML=`
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
             Continue with Google
         `;
