@@ -303,3 +303,35 @@ body{
 }
 
 }
+.mobile-menu.show{
+    display:block;
+}
+
+body.dark{
+    background:#111;
+    color:#fff;
+}
+
+body.dark .header{
+    background:#111;
+}
+
+body.dark .mobile-menu{
+    background:#111;
+}
+
+body.dark .mobile-menu a{
+    color:#fff;
+    border-color:#333;
+}
+
+body.dark .browse-btn{
+    background:#222;
+    color:#fff;
+    border-color:#444;
+}
+
+body.dark .hero p,
+body.dark .card p{
+    color:#cfcfcf;
+}
