@@ -491,3 +491,189 @@ body.dark .card p{
 }
 
 }
+/*==========================
+PROCESS SECTION
+==========================*/
+
+.process{
+
+    background:#f7f7f3;
+    padding:90px 20px;
+
+}
+
+.process-title{
+
+    text-align:center;
+    margin-bottom:60px;
+
+}
+
+.process-title span{
+
+    color:#4E8D00;
+    font-size:15px;
+    font-weight:700;
+    letter-spacing:2px;
+
+}
+
+.process-title h2{
+
+    margin-top:18px;
+    font-size:58px;
+    line-height:1.05;
+    font-weight:900;
+
+}
+
+.process-card{
+
+    max-width:650px;
+    margin:0 auto;
+    background:#fff;
+    padding:50px;
+    border-bottom:1px solid #ececec;
+
+}
+
+.process-top{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:40px;
+
+}
+
+.process-icon{
+
+    width:74px;
+    height:74px;
+    background:#f4f5ef;
+    border-radius:18px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+}
+
+.process-icon i{
+
+    font-size:34px;
+    color:#4E8D00;
+
+}
+
+.process-number{
+
+    font-size:60px;
+    color:#ececec;
+    font-weight:900;
+
+}
+
+.process-card h3{
+
+    font-size:42px;
+    margin-bottom:20px;
+    font-weight:800;
+
+}
+
+.process-card p{
+
+    color:#666;
+    font-size:24px;
+    line-height:1.8;
+
+}
+
+@media(max-width:768px){
+
+.process-title h2{
+
+    font-size:42px;
+
+}
+
+.process-card{
+
+    padding:35px;
+
+}
+
+.process-card h3{
+
+    font-size:30px;
+
+}
+
+.process-card p{
+
+    font-size:18px;
+
+}
+
+.process-number{
+
+    font-size:46px;
+
+}
+
+}
+
+@media(max-width:480px){
+
+.process{
+
+    padding:70px 16px;
+
+}
+
+.process-title h2{
+
+    font-size:34px;
+
+}
+
+.process-card{
+
+    padding:28px;
+
+}
+
+.process-icon{
+
+    width:60px;
+    height:60px;
+
+}
+
+.process-icon i{
+
+    font-size:28px;
+
+}
+
+.process-card h3{
+
+    font-size:22px;
+
+}
+
+.process-card p{
+
+    font-size:15px;
+    line-height:1.8;
+
+}
+
+.process-number{
+
+    font-size:40px;
+
+}
+
+}
