@@ -1,0 +1,305 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#fff;
+    color:#111;
+}
+
+/* HEADER */
+
+.header{
+    width:100%;
+    height:80px;
+    padding:0 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#fff;
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+.logo{
+    text-decoration:none;
+    color:#4E8D00;
+    font-size:36px;
+    font-weight:800;
+    letter-spacing:-1px;
+}
+
+.header-icons{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.header-icons button{
+    border:none;
+    background:none;
+    cursor:pointer;
+    color:#111;
+}
+
+.header-icons i{
+    font-size:30px;
+}
+
+/* MENU */
+
+.mobile-menu{
+    display:none;
+    background:#fff;
+    border-top:1px solid #ececec;
+}
+
+.mobile-menu a{
+    display:block;
+    text-decoration:none;
+    color:#111;
+    font-size:17px;
+    font-weight:600;
+    padding:18px 25px;
+    border-bottom:1px solid #f1f1f1;
+}
+
+/* HERO */
+
+.hero{
+    max-width:600px;
+    margin:auto;
+    text-align:center;
+    padding:70px 22px 90px;
+}
+
+.hero h1{
+    font-size:74px;
+    line-height:.93;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:-3px;
+}
+
+.hero h1 span{
+    color:#4E8D00;
+}
+
+.hero p{
+    margin-top:42px;
+    font-size:24px;
+    line-height:1.75;
+    color:#666;
+}
+
+/* BUTTONS */
+
+.hero-buttons{
+    margin-top:55px;
+}
+
+.start-btn,
+.browse-btn{
+    width:100%;
+    max-width:360px;
+    height:72px;
+    margin:0 auto 22px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-decoration:none;
+    border-radius:14px;
+    font-size:24px;
+    font-weight:800;
+    transition:.3s;
+}
+
+.start-btn{
+    background:#4E8D00;
+    color:#fff;
+}
+
+.start-btn i{
+    margin-left:12px;
+    font-size:28px;
+}
+
+.start-btn:hover{
+    transform:translateY(-2px);
+}
+
+.browse-btn{
+    background:#fff;
+    color:#111;
+    border:2px solid #e5e5e5;
+}
+
+.browse-btn:hover{
+    background:#f8f8f8;
+}
+
+/* GREEN BAR */
+
+.category{
+    width:100%;
+    background:#4E8D00;
+    color:#fff;
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:2px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:28px 35px;
+}
+
+/* STATS */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    border-top:1px solid #ececec;
+    border-left:1px solid #ececec;
+    margin-top:80px;
+}
+
+.card{
+    text-align:center;
+    padding:80px 20px;
+    border-right:1px solid #ececec;
+    border-bottom:1px solid #ececec;
+}
+
+.card h2{
+    color:#4E8D00;
+    font-size:64px;
+    font-weight:900;
+}
+
+.card p{
+    margin-top:18px;
+    color:#777;
+    font-size:22px;
+    line-height:1.4;
+    text-transform:uppercase;
+}
+
+/* TABLETS */
+
+@media(max-width:768px){
+
+.logo{
+    font-size:30px;
+}
+
+.hero{
+    padding:45px 20px 70px;
+}
+
+.hero h1{
+    font-size:56px;
+    letter-spacing:-2px;
+}
+
+.hero p{
+    font-size:18px;
+    line-height:1.7;
+}
+
+.start-btn,
+.browse-btn{
+    height:58px;
+    font-size:19px;
+}
+
+.category{
+    font-size:20px;
+    padding:22px;
+}
+
+.card{
+    padding:55px 15px;
+}
+
+.card h2{
+    font-size:46px;
+}
+
+.card p{
+    font-size:18px;
+}
+
+}
+
+/* PHONES */
+
+@media(max-width:480px){
+
+.header{
+    height:74px;
+    padding:0 18px;
+}
+
+.logo{
+    font-size:28px;
+}
+
+.header-icons i{
+    font-size:28px;
+}
+
+.hero{
+    padding:55px 20px 80px;
+}
+
+.hero h1{
+    font-size:36px;
+    line-height:.96;
+    letter-spacing:-1px;
+}
+
+.hero p{
+    margin-top:28px;
+    font-size:16px;
+    line-height:1.8;
+}
+
+.start-btn,
+.browse-btn{
+    height:50px;
+    font-size:17px;
+    max-width:320px;
+    border-radius:10px;
+}
+
+.category{
+    font-size:16px;
+    padding:18px 20px;
+}
+
+.stats{
+    margin-top:45px;
+}
+
+.card{
+    padding:40px 10px;
+}
+
+.card h2{
+    font-size:30px;
+}
+
+.card p{
+    font-size:11px;
+    line-height:1.5;
+}
+
+}
