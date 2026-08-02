@@ -2,24 +2,26 @@ import { auth, db } from "./firebase.js";
 
 import {
     onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 
 import {
     doc,
     getDoc,
+    onSnapshot,
     collection,
     query,
     where,
     orderBy,
     limit,
-    onSnapshot,
-    addDoc,
-    serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+    getDocs
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 /*==================================
 ELEMENTS
 ==================================*/
+
+const loadingScreen =
+document.getElementById("loadingScreen");
 
 const walletBalance =
 document.getElementById("walletBalance");
@@ -30,11 +32,11 @@ document.getElementById("amountInput");
 const openPaymentBtn =
 document.getElementById("openPaymentBtn");
 
-const paymentOverlay =
-document.getElementById("paymentOverlay");
-
 const paymentModal =
 document.getElementById("paymentModal");
+
+const paymentOverlay =
+document.getElementById("paymentOverlay");
 
 const paymentAmount =
 document.getElementById("paymentAmount");
@@ -60,100 +62,88 @@ document.getElementById("closePayment");
 const cancelPayment =
 document.getElementById("cancelPayment");
 
+const minimumToast =
+document.getElementById("minimumToast");
+
 const transactionList =
 document.getElementById("transactionList");
 
 const quickButtons =
 document.querySelectorAll(".amount-btn");
 
-/*==================================
-GLOBAL VARIABLES
-==================================*/
-
-let currentUser = null;
-
-let currentAmount = 0;
-
-let currentReference = "";
-
-let currentBank = "";
-
-const accountName =
-"Ogaga Blessing Idoghe";
-
-const whatsappNumber =
-"2349117412352";
-
-const accountNo =
-"9117412352";
+const backBtn =
+document.getElementById("backBtn");
 
 /*==================================
 HELPERS
 ==================================*/
 
-function formatMoney(value){
+function hideLoading(){
 
-    return "₦" +
+    if(!loadingScreen) return;
 
-    Number(value).toLocaleString("en-NG");
+    loadingScreen.classList.add("hide");
+
+    setTimeout(()=>{
+
+        loadingScreen.style.display="none";
+
+    },300);
+
+}
+
+function showMinimumToast(){
+
+    if(!minimumToast) return;
+
+    minimumToast.classList.add("show");
+
+    setTimeout(()=>{
+
+        minimumToast.classList.remove("show");
+
+    },3000);
 
 }
 
 function generateReference(){
 
-    return "DS" + Date.now();
+    return "TS" + Date.now();
 
 }
-
 /*==================================
-BANK ROTATION
+BACK BUTTON
 ==================================*/
 
-function getBank(){
+if(backBtn){
 
-    const lastBank =
-    localStorage.getItem("lastBank");
+    backBtn.addEventListener("click",()=>{
 
-    if(lastBank === "PalmPay"){
+        window.location.href="dashboard.html";
 
-        currentBank = "OPay";
-
-    }else{
-
-        currentBank = "PalmPay";
-
-    }
-
-    localStorage.setItem(
-
-        "lastBank",
-
-        currentBank
-
-    );
-
-    return currentBank;
+    });
 
 }
+
 /*==================================
 AUTH
 ==================================*/
 
-onAuthStateChanged(auth, async(user)=>{
+onAuthStateChanged(auth,async(user)=>{
 
     if(!user){
 
-        window.location.href = "login.html";
+        window.location.replace("login.html");
 
         return;
 
     }
 
-    currentUser = user;
+    await loadWallet(user.uid);
 
-    loadWallet(user.uid);
+    watchWallet(user.uid);
 
-    loadTransactions(user.uid);
+    await loadTransactions(user.uid);
 
 });
 
@@ -165,33 +155,36 @@ async function loadWallet(userId){
 
     try{
 
-        const userRef = doc(db,"users",userId);
+        const userRef =
+        doc(db,"users",userId);
 
-        const snap = await getDoc(userRef);
+        const userSnap =
+        await getDoc(userRef);
 
-        if(!snap.exists()) return;
+        if(!userSnap.exists()){
 
-        const data = snap.data();
+            hideLoading();
 
-        const balance = Number(
+            return;
 
-            data.wallet ||
+        }
 
-            data.walletBalance ||
+        const data =
+        userSnap.data();
 
-            0
-
-        );
+        const balance =
+        Number(data.walletBalance || 0);
 
         walletBalance.textContent =
+        "₦" + balance.toLocaleString("en-NG");
 
-        formatMoney(balance);
-
-    }
-
-    catch(error){
+    }catch(error){
 
         console.error(error);
+
+    }finally{
+
+        hideLoading();
 
     }
 
@@ -203,55 +196,35 @@ REALTIME WALLET
 
 function watchWallet(userId){
 
-    const userRef = doc(db,"users",userId);
+    const userRef =
+    doc(db,"users",userId);
 
-    onSnapshot(userRef,(snap)=>{
+    onSnapshot(userRef,(snapshot)=>{
 
-        if(!snap.exists()) return;
+        if(!snapshot.exists()) return;
 
-        const data = snap.data();
-
-        const balance = Number(
-
-            data.wallet ||
-
-            data.walletBalance ||
-
-            0
-
-        );
+        const data =
+        snapshot.data();
 
         walletBalance.textContent =
-
-        formatMoney(balance);
+        "₦" +
+        Number(
+            data.walletBalance || 0
+        ).toLocaleString("en-NG");
 
     });
 
 }
 
-onAuthStateChanged(auth,(user)=>{
-
-    if(user){
-
-        watchWallet(user.uid);
-
-    }
-
-});
-
 /*==================================
 QUICK AMOUNT BUTTONS
 ==================================*/
 
-quickButtons.forEach(button=>{
+quickButtons.forEach((button)=>{
 
-    button.type = "button";
+    button.addEventListener("click",()=>{
 
-    button.addEventListener("click",(e)=>{
-
-        e.preventDefault();
-
-        quickButtons.forEach(btn=>{
+        quickButtons.forEach((btn)=>{
 
             btn.classList.remove("active");
 
@@ -260,42 +233,27 @@ quickButtons.forEach(button=>{
         button.classList.add("active");
 
         amountInput.value =
-
         button.dataset.amount;
 
-        currentAmount =
-
-        Number(button.dataset.amount);
+        amountInput.focus();
 
     });
 
 });
 
 /*==================================
-INPUT CHANGED
+REMOVE ACTIVE WHEN USER TYPES
 ==================================*/
 
 amountInput.addEventListener("input",()=>{
 
-    currentAmount =
+    quickButtons.forEach((btn)=>{
 
-    Number(amountInput.value || 0);
-
-    quickButtons.forEach(btn=>{
-
-        if(
-
-            btn.dataset.amount ===
-
-            amountInput.value
-
-        ){
+        if(btn.dataset.amount === amountInput.value){
 
             btn.classList.add("active");
 
-        }
-
-        else{
+        }else{
 
             btn.classList.remove("active");
 
@@ -305,105 +263,108 @@ amountInput.addEventListener("input",()=>{
 
 });
 /*==================================
+BANK ROTATION
+==================================*/
+
+function getNextBank(){
+
+    const lastBank =
+    localStorage.getItem("lastBank");
+
+    let nextBank;
+
+    if(lastBank === "PalmPay"){
+
+        nextBank = "OPay";
+
+    }else{
+
+        nextBank = "PalmPay";
+
+    }
+
+    localStorage.setItem(
+        "lastBank",
+        nextBank
+    );
+
+    return nextBank;
+
+}
+
+/*==================================
 OPEN PAYMENT
 ==================================*/
 
 openPaymentBtn.addEventListener("click",()=>{
 
-    currentAmount = Number(amountInput.value || 0);
+    const amount =
+    Number(amountInput.value);
 
-    if(currentAmount < 1000){
+    if(amount < 1000){
 
-        alert("Minimum wallet funding is ₦1,000.");
-
-        amountInput.focus();
+        showMinimumToast();
 
         return;
 
     }
 
-    /* Generate Reference */
-
-    currentReference = generateReference();
-
-    paymentReference.textContent = currentReference;
-
     /* Amount */
 
     paymentAmount.textContent =
+    "₦" + amount.toLocaleString("en-NG");
 
-    formatMoney(currentAmount);
+    /* Reference */
+
+    paymentReference.textContent =
+    generateReference();
 
     /* Rotate Bank */
 
-    bankName.textContent = getBank();
+    const bank =
+    getNextBank();
 
-    /* Account Number */
+    bankName.textContent =
+    bank;
 
-    accountNumber.textContent = accountNo;
+    /* Same account details */
 
-    /* Loading Effect */
+    accountNumber.textContent =
+    "9117412352";
 
-    const oldText = openPaymentBtn.innerHTML;
+    /* Open Popup */
 
-    openPaymentBtn.disabled = true;
+    paymentModal.classList.add("active");
 
-    openPaymentBtn.innerHTML = `
-
-        <i class="ri-loader-4-line ri-spin"></i>
-
-        Opening...
-
-    `;
-
-    setTimeout(()=>{
-
-        openPaymentBtn.innerHTML = oldText;
-
-        openPaymentBtn.disabled = false;
-
-        paymentOverlay.classList.add("active");
-
-        paymentModal.classList.add("active");
-
-    },1000);
+    paymentOverlay.classList.add("active");
 
 });
 
 /*==================================
-CLOSE POPUP
+CLOSE PAYMENT
 ==================================*/
 
-function closePopup(){
-
-    paymentOverlay.classList.remove("active");
+function closePaymentModal(){
 
     paymentModal.classList.remove("active");
+
+    paymentOverlay.classList.remove("active");
 
 }
 
 closePayment.addEventListener(
-
     "click",
-
-    closePopup
-
+    closePaymentModal
 );
 
 cancelPayment.addEventListener(
-
     "click",
-
-    closePopup
-
+    closePaymentModal
 );
 
 paymentOverlay.addEventListener(
-
     "click",
-
-    closePopup
-
+    closePaymentModal
 );
 
 /*==================================
@@ -414,19 +375,21 @@ copyAccount.addEventListener("click",async()=>{
 
     try{
 
-        await navigator.clipboard.writeText(accountNo);
+        await navigator.clipboard.writeText(
+            accountNumber.textContent
+        );
 
-        copyAccount.textContent = "Copied";
+        copyAccount.textContent =
+        "Copied";
 
         setTimeout(()=>{
 
-            copyAccount.textContent = "Copy";
+            copyAccount.textContent =
+            "Copy";
 
         },2000);
 
-    }
-
-    catch(error){
+    }catch(error){
 
         console.error(error);
 
@@ -435,224 +398,116 @@ copyAccount.addEventListener("click",async()=>{
 });
 /*==================================
 SEND PROOF TO WHATSAPP
-CREATE TRANSACTION
 ==================================*/
 
-sendProofBtn.addEventListener("click", async()=>{
+sendProofBtn.addEventListener("click",()=>{
 
-    if(!currentUser){
+    const amount =
+    paymentAmount.textContent;
 
-        alert("Please login again.");
+    const reference =
+    paymentReference.textContent;
 
-        return;
+    const bank =
+    bankName.textContent;
 
-    }
+    const message =
 
-    try{
+`Hello ThesuftSocials,
 
-        sendProofBtn.disabled = true;
+I have made a bank transfer.
 
-        const oldText = sendProofBtn.innerHTML;
+Amount: ${amount}
 
-        sendProofBtn.innerHTML = `
-            <i class="ri-loader-4-line ri-spin"></i>
-            Creating Transaction...
-        `;
+Bank: ${bank}
 
-        /* SAVE TO FIREBASE */
+Reference: ${reference}
 
-        await addDoc(
-
-            collection(db,"transactions"),
-
-            {
-
-                userId: currentUser.uid,
-
-                type: "Wallet Top-up",
-
-                amount: currentAmount,
-
-                bank: currentBank,
-
-                accountName: accountName,
-
-                accountNumber: accountNo,
-
-                reference: currentReference,
-
-                status: "Pending",
-
-                createdAt: serverTimestamp()
-
-            }
-
-        );
-
-        /* OPEN WHATSAPP */
-
-        const message =
-
-`Hello DigiSphere,
-
-I have funded my wallet.
-
-Amount: ${formatMoney(currentAmount)}
-
-Bank: ${currentBank}
-
-Reference: ${currentReference}
-
-Account Name: ${accountName}
-
-Account Number: ${accountNo}
-
-I have attached my payment receipt for confirmation.
+Please find my payment receipt attached below for confirmation.
 
 Thank you.`;
 
-        window.open(
+    const whatsappNumber =
+    "2349117412352";
 
-            `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`,
+    const whatsappUrl =
 
-            "_blank"
+`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
-        );
-
-        sendProofBtn.innerHTML = oldText;
-
-        sendProofBtn.disabled = false;
-
-        amountInput.value = "";
-
-        currentAmount = 0;
-
-        quickButtons.forEach(btn=>{
-
-            btn.classList.remove("active");
-
-        });
-
-        closePopup();
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-        alert("Unable to submit payment.");
-
-        sendProofBtn.disabled = false;
-
-        sendProofBtn.innerHTML = `
-            <i class="ri-whatsapp-line"></i>
-            Send Proof to WhatsApp
-        `;
-
-    }
+    window.open(
+        whatsappUrl,
+        "_blank"
+    );
 
 });
 
 /*==================================
-LOAD TRANSACTIONS
+LOAD RECENT TRANSACTIONS
 ==================================*/
 
-function loadTransactions(userId){
+async function loadTransactions(userId){
 
-    const q = query(
+    try{
 
-        collection(db,"transactions"),
+        const q = query(
 
-        where("userId","==",userId),
+            collection(db,"transactions"),
 
-        orderBy("createdAt","desc"),
+            where("userId","==",userId),
 
-        limit(20)
+            orderBy("createdAt","desc"),
 
-    );
+            limit(5)
 
-    onSnapshot(q,(snapshot)=>{
+        );
 
-        transactionList.innerHTML = "";
+        const snapshot =
+        await getDocs(q);
 
         if(snapshot.empty){
-
-            transactionList.innerHTML = `
-
-            <div class="empty-transactions">
-
-                <i class="ri-exchange-funds-line"></i>
-
-                <h3>No Transactions Yet</h3>
-
-                <p>Your wallet funding history will appear here.</p>
-
-            </div>
-
-            `;
 
             return;
 
         }
 
-        snapshot.forEach((docSnap)=>{
+        transactionList.innerHTML = "";
 
-            const item = docSnap.data();
+        snapshot.forEach((document)=>{
 
-            let date = "";
-
-            if(item.createdAt?.toDate){
-
-                date = item.createdAt
-                .toDate()
-                .toLocaleString("en-GB");
-
-            }
+            const item =
+            document.data();
 
             transactionList.innerHTML += `
 
             <div class="transaction-card">
 
-                <div class="transaction-left">
+                <div class="transaction-icon">
 
-                    <div class="transaction-icon">
+                    <i class="ri-wallet-3-line"></i>
 
-                        <i class="ri-wallet-3-line"></i>
+                </div>
 
-                    </div>
+                <div class="transaction-info">
 
-                    <div class="transaction-info">
+                    <h3>${item.type || "Wallet Top-up"}</h3>
 
-                        <h3>
+                    <p>${item.status || "Pending"}</p>
 
-                            ${item.type}
+                    <div class="transaction-bottom">
 
-                        </h3>
+                        <span class="transaction-amount">
 
-                        <p>
+                            ₦${Number(
+                                item.amount || 0
+                            ).toLocaleString("en-NG")}
 
-                            ${item.reference}
+                        </span>
 
-                            ${date ? " • "+date : ""}
+                        <span class="status ${String(item.status || "").toLowerCase()}">
 
-                        </p>
+                            ${item.status || "Pending"}
 
-                        <div class="transaction-bottom">
-
-                            <span class="transaction-amount">
-
-                                ${formatMoney(item.amount)}
-
-                            </span>
-
-                            <span class="status ${String(item.status).toLowerCase()}">
-
-                                ${item.status}
-
-                            </span>
-
-                        </div>
+                        </span>
 
                     </div>
 
@@ -664,6 +519,26 @@ function loadTransactions(userId){
 
         });
 
-    });
+    }catch(error){
+
+        console.error(error);
+
+    }
 
 }
+
+/*==================================
+HIDE LOADING IF ERROR
+==================================*/
+
+window.addEventListener("error",()=>{
+
+    hideLoading();
+
+});
+
+window.addEventListener("unhandledrejection",()=>{
+
+    hideLoading();
+
+});
