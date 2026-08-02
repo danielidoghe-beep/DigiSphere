@@ -3,17 +3,18 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<title>Dashboard | DigiSphere</title>
+    <title>Dashboard | DigiSphere</title>
 
-<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
 
-<link rel="stylesheet" href="dashboard.css">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
 </head>
 
@@ -24,60 +25,18 @@
 <div id="loader">
 
     <div class="loader-logo">
-
         <i class="fa-solid fa-layer-group"></i>
-
     </div>
 
 </div>
 
-<!-- Top Navigation -->
+<!-- Sidebar Overlay -->
 
-<header class="topbar">
-
-    <button id="menuBtn" class="icon-btn">
-
-        <i class="fa-solid fa-bars"></i>
-
-    </button>
-
-    <div class="top-center">
-
-        <button id="themeToggle" class="theme-pill">
-
-            <i class="fa-regular fa-sun"></i>
-
-            <span>Light</span>
-
-        </button>
-
-    </div>
-
-    <div class="top-right">
-
-        <button id="notificationBtn" class="icon-btn notification-btn">
-
-            <i class="fa-regular fa-bell"></i>
-
-            <span id="notificationCount" class="badge">0</span>
-
-        </button>
-
-        <div id="userAvatar" class="avatar">
-
-            <img id="profileImage" hidden>
-
-            <span id="avatarLetters">DS</span>
-
-        </div>
-
-    </div>
-
-</header>
+<div id="overlay"></div>
 
 <!-- Sidebar -->
 
-<aside id="sidebar" class="sidebar">
+<aside id="sidebar">
 
     <div class="sidebar-header">
 
@@ -91,7 +50,7 @@
 
     </div>
 
-    <nav>
+    <div class="sidebar-links">
 
         <a href="dashboard.html">
 
@@ -125,27 +84,11 @@
 
         </a>
 
-        <a href="notifications.html">
-
-            <i class="fa-regular fa-bell"></i>
-
-            Notifications
-
-        </a>
-
         <a href="profile.html">
 
-            <i class="fa-regular fa-user"></i>
+            <i class="fa-solid fa-user"></i>
 
             Profile
-
-        </a>
-
-        <a href="settings.html">
-
-            <i class="fa-solid fa-gear"></i>
-
-            Settings
 
         </a>
 
@@ -157,23 +100,56 @@
 
         </a>
 
-    </nav>
+    </div>
 
 </aside>
 
-<div id="overlay" class="overlay"></div>
+<!-- Top Navigation -->
 
-<!-- Main Content -->
+<header class="topbar">
+
+    <button id="menuBtn">
+
+        <i class="fa-solid fa-bars"></i>
+
+    </button>
+
+    <button id="themeToggle"
+            class="theme-toggle">
+
+        <i class="fa-solid fa-moon"></i>
+
+    </button>
+
+    <button id="notificationBtn"
+            class="notification-btn">
+
+        <i class="fa-regular fa-bell"></i>
+
+        <span id="notificationCount">
+            0
+        </span>
+
+    </button>
+
+    <div class="profile-avatar"
+         id="profileAvatar">
+
+        DD
+
+    </div>
+
+</header>
 
 <main class="dashboard">
 
-    <!-- Welcome -->
+    <!-- Welcome Section -->
 
     <section class="welcome">
 
         <h1>
 
-            Welcome,
+            Welcome back,
 
             <span id="userName">
 
@@ -181,21 +157,26 @@
 
             </span>
 
+            👋
+
         </h1>
 
         <p>
 
-            Nice to see you again.
+            Here's what's going on with your account
 
         </p>
 
     </section>
-
-    <!-- Wallet -->
+        <!-- Wallet Card -->
 
     <section class="summary-card wallet-card">
 
-        <small>Wallet Balance</small>
+        <p class="card-label">
+
+            Wallet balance
+
+        </p>
 
         <h2 id="walletBalance">
 
@@ -203,21 +184,25 @@
 
         </h2>
 
-        <button id="addFundsBtn" class="card-link">
+        <a href="wallet.html" class="card-link">
 
-            Add Funds
+            View history
 
             <i class="fa-solid fa-arrow-right"></i>
 
-        </button>
+        </a>
 
     </section>
 
-    <!-- Purchases -->
+    <!-- Purchases Card -->
 
     <section class="summary-card">
 
-        <small>Total Purchases</small>
+        <p class="card-label">
+
+            Total purchases
+
+        </p>
 
         <h2 id="purchaseCount">
 
@@ -225,21 +210,25 @@
 
         </h2>
 
-        <button id="viewOrdersBtn" class="card-link">
+        <a href="orders.html" class="card-link">
 
-            View Orders
+            View orders
 
             <i class="fa-solid fa-arrow-right"></i>
 
-        </button>
+        </a>
 
     </section>
 
-    <!-- Inventory -->
+    <!-- Inventory Card -->
 
     <section class="summary-card">
 
-        <small>Inventory</small>
+        <p class="card-label">
+
+            Available inventory
+
+        </p>
 
         <h2 id="inventoryCount">
 
@@ -247,9 +236,21 @@
 
         </h2>
 
-        <p id="inventoryInfo">
+        <p class="inventory-details">
 
-            0 Active • 0 Expired
+            <span id="logsCount">
+
+                0 logs
+
+            </span>
+
+            •
+
+            <span id="toolsCount">
+
+                0 tools
+
+            </span>
 
         </p>
 
@@ -261,39 +262,150 @@
 
         <h3>
 
-            Quick Actions
+            Quick actions
 
         </h3>
 
-        <div id="quickActions">
+        <div class="action-card"
+             id="buyLogs">
 
-            <!-- Firebase or JS -->
+            <div class="action-icon blue">
+
+                <i class="fa-solid fa-cube"></i>
+
+            </div>
+
+            <div>
+
+                <h4>
+
+                    Buy Logs
+
+                </h4>
+
+                <p>
+
+                    Social media accounts, VPNs, proxies, etc.
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="action-card"
+             id="buyTools">
+
+            <div class="action-icon purple">
+
+                <i class="fa-solid fa-wrench"></i>
+
+            </div>
+
+            <div>
+
+                <h4>
+
+                    Buy Tools
+
+                </h4>
+
+                <p>
+
+                    Updates & pictures
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="action-card"
+             id="topupWallet">
+
+            <div class="action-icon green">
+
+                <i class="fa-solid fa-wallet"></i>
+
+            </div>
+
+            <div>
+
+                <h4>
+
+                    Top Up Wallet
+
+                </h4>
+
+                <p>
+
+                    Add funds to your balance
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="action-card"
+             id="support">
+
+            <div class="action-icon orange">
+
+                <i class="fa-solid fa-headset"></i>
+
+            </div>
+
+            <div>
+
+                <h4>
+
+                    Get Support
+
+                </h4>
+
+                <p>
+
+                    Open a support ticket
+
+                </p>
+
+            </div>
 
         </div>
 
     </section>
-
-    <!-- Recent Orders -->
+        <!-- Recent Orders -->
 
     <section class="section">
 
-        <div class="section-title">
+        <div class="section-header">
 
-            <h3>
-
-                Recent Orders
-
-            </h3>
+            <h3>Recent orders</h3>
 
             <a href="orders.html">
 
-                View All
+                View all
 
             </a>
 
         </div>
 
         <div id="recentOrders">
+
+            <div class="empty-card">
+
+                <i class="fa-solid fa-bag-shopping"></i>
+
+                <h4>No orders yet</h4>
+
+                <p>
+
+                    Your purchases will appear here
+
+                </p>
+
+            </div>
 
         </div>
 
@@ -305,53 +417,105 @@
 
         <h3>
 
-            Coming Soon
+            Coming soon
 
         </h3>
 
-        <div id="comingSoon">
+        <div class="coming-item">
+
+            <div class="coming-left">
+
+                <div class="coming-icon">
+
+                    <i class="fa-regular fa-message"></i>
+
+                </div>
+
+                <span>
+
+                    SMS Numbers
+
+                </span>
+
+            </div>
+
+            <span class="soon-badge">
+
+                Soon
+
+            </span>
+
+        </div>
+
+        <div class="coming-item">
+
+            <div class="coming-left">
+
+                <div class="coming-icon">
+
+                    <i class="fa-solid fa-bolt"></i>
+
+                </div>
+
+                <span>
+
+                    SME Boosting
+
+                </span>
+
+            </div>
+
+            <span class="soon-badge">
+
+                Soon
+
+            </span>
 
         </div>
 
     </section>
 
-    <!-- Help -->
+    <!-- Help Section -->
 
     <section class="help-card">
 
         <h3>
 
-            Need Help?
+            Need quick help?
 
         </h3>
 
         <p>
 
-            Contact DigiSphere support if you need any assistance.
+            Reach support directly if you want a faster response outside tickets.
 
         </p>
 
-        <button id="supportBtn" class="primary-btn">
+        <a href="#"
+           id="whatsappBtn"
+           class="help-btn primary">
 
             <i class="fa-brands fa-whatsapp"></i>
 
-            Contact Support
+            Chat on WhatsApp
 
-        </button>
+        </a>
 
-        <button id="emailBtn" class="secondary-btn">
+        <a href="#"
+           id="telegramBtn"
+           class="help-btn secondary">
+
+            <i class="fa-brands fa-telegram"></i>
+
+            Open Telegram
+
+        </a>
+
+        <div class="support-email">
 
             <i class="fa-regular fa-envelope"></i>
 
-            Email Support
-
-        </button>
-
-        <div class="email-row">
-
-            <i class="fa-regular fa-envelope"></i>
-
-            <span>
+            <span id="supportEmail">
 
                 support@digisphere.com
 
@@ -363,6 +527,7 @@
 
 </main>
 
+<script src="theme.js"></script>
 <script type="module" src="dashboard.js"></script>
 
 </body>
