@@ -1,47 +1,20 @@
-// =====================================
-// DigiSphere Dashboard
-// dashboard.js (Part 1)
-// =====================================
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 
 import {
     getAuth,
     onAuthStateChanged,
     signOut
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 import {
     getFirestore,
     doc,
-    getDoc,
-    onSnapshot,
-    collection,
-    query,
-    where,
-    orderBy,
-    limit
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
-
-// =====================================
-// Firebase
-// =====================================
+    onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const firebaseConfig = {
 
-    apiKey: "AIzaSyDnpsEIlXwPLSCJAGMS7feM2JMhmxzCCfs",
-
-    authDomain: "digisphere-66fdf.firebaseapp.com",
-
-    projectId: "digisphere-66fdf",
-
-    storageBucket: "digisphere-66fdf.firebasestorage.app",
-
-    messagingSenderId: "834194884246",
-
-    appId: "1:834194884246:web:72672ca253c3d7dd9d24b7",
-
-    measurementId: "G-19QS4036V7"
+    // Paste your Firebase config here
 
 };
 
@@ -51,73 +24,77 @@ const auth = getAuth(app);
 
 const db = getFirestore(app);
 
-// =====================================
+// ======================================
 // Elements
-// =====================================
+// ======================================
 
 const loader = document.getElementById("loader");
-
-const userName = document.getElementById("userName");
-
-const walletBalance = document.getElementById("walletBalance");
-
-const purchaseCount = document.getElementById("purchaseCount");
-
-const inventoryCount = document.getElementById("inventoryCount");
-
-const logsCount = document.getElementById("logsCount");
-
-const toolsCount = document.getElementById("toolsCount");
-
-const notificationCount = document.getElementById("notificationCount");
-
-const profileAvatar = document.getElementById("profileAvatar");
-
-const sidebar = document.getElementById("sidebar");
-
-const overlay = document.getElementById("overlay");
 
 const menuBtn = document.getElementById("menuBtn");
 
 const closeSidebar = document.getElementById("closeSidebar");
 
+const sidebar = document.getElementById("sidebar");
+
+const overlay = document.getElementById("overlay");
+
 const logoutBtn = document.getElementById("logoutBtn");
 
-// =====================================
-// Loading Screen
-// =====================================
+const userName = document.getElementById("userName");
 
-window.addEventListener("load",()=>{
+const userAvatar = document.getElementById("userAvatar");
 
-    setTimeout(()=>{
+const walletBalance = document.getElementById("walletBalance");
 
-        loader.style.display="none";
+const topWallet = document.getElementById("topWallet");
 
-    },1500);
+const purchaseCount = document.getElementById("purchaseCount");
 
-});
+const inventoryCount = document.getElementById("inventoryCount");
 
-// =====================================
+const inventoryBreakdown = document.getElementById("inventoryBreakdown");
+
+const notificationCount = document.getElementById("notificationCount");
+
+// ======================================
+// Loader
+// ======================================
+
+function showLoader() {
+
+    loader.style.display = "flex";
+
+}
+
+function hideLoader() {
+
+    loader.style.opacity = "0";
+
+    setTimeout(() => {
+
+        loader.style.display = "none";
+
+    },300);
+
+}
+
+// ======================================
 // Sidebar
-// =====================================
+// ======================================
 
-menuBtn.onclick=()=>{
+menuBtn.addEventListener("click",()=>{
 
     sidebar.classList.add("active");
 
     overlay.classList.add("active");
 
-}
+});
 
-closeSidebar.onclick=()=>{
+closeSidebar.addEventListener("click",closeMenu);
 
-    sidebar.classList.remove("active");
+overlay.addEventListener("click",closeMenu);
 
-    overlay.classList.remove("active");
-
-}
-
-overlay.onclick=()=>{
+function closeMenu(){
 
     sidebar.classList.remove("active");
 
@@ -125,39 +102,30 @@ overlay.onclick=()=>{
 
 }
 
-// =====================================
-// User Authentication
-// =====================================
+// ======================================
+// Auth
+// ======================================
 
-let currentUser;
-
-onAuthStateChanged(auth,async(user)=>{
+onAuthStateChanged(auth,(user)=>{
 
     if(!user){
 
-        location.href="login.html";
+        window.location.href="login.html";
 
         return;
 
     }
 
-    currentUser=user;
-
-    loadUser();
-
-    loadNotifications();
-
-    loadOrders();
+    loadUser(user);
 
 });
-// =====================================
-// Part 2
+// ======================================
 // Load User Information
-// =====================================
+// ======================================
 
-function loadUser(){
+function loadUser(user){
 
-    const userRef = doc(db,"users",currentUser.uid);
+    const userRef = doc(db,"users",user.uid);
 
     onSnapshot(userRef,(snapshot)=>{
 
@@ -165,57 +133,85 @@ function loadUser(){
 
         const data = snapshot.data();
 
-        // -------------------------
+        // ==========================
         // Welcome Name
-        // -------------------------
+        // ==========================
 
-        userName.textContent =
-            data.firstName ||
-            data.name ||
-            currentUser.displayName ||
-            currentUser.email.split("@")[0];
+        let firstName = "";
 
-        // -------------------------
+        if(data.firstName){
+
+            firstName = data.firstName;
+
+        }
+
+        else if(data.name){
+
+            firstName = data.name.split(" ")[0];
+
+        }
+
+        else if(user.displayName){
+
+            firstName = user.displayName.split("")[0];
+
+        }
+
+        else{
+
+            firstName = user.email.split("@")[0];
+
+        }
+
+        userName.textContent = firstName;
+
+        // ==========================
         // Wallet
-        // -------------------------
+        // ==========================
+
+        const balance = Number(data.wallet || 0);
 
         walletBalance.textContent =
-            "₦" +
-            Number(data.wallet || 0)
-            .toLocaleString("en-NG");
+        "₦" + balance.toLocaleString("en-NG");
 
-        // -------------------------
+        topWallet.textContent =
+        balance.toLocaleString("en-NG");
+
+        // ==========================
         // Purchases
-        // -------------------------
+        // ==========================
 
         purchaseCount.textContent =
-            Number(data.totalOrders || 0)
-            .toLocaleString("en-NG");
+        Number(data.totalOrders || 0)
+        .toLocaleString("en-NG");
 
-        // -------------------------
+        // ==========================
         // Inventory
-        // -------------------------
+        // ==========================
 
         inventoryCount.textContent =
-            Number(data.inventory || 0)
-            .toLocaleString("en-NG");
+        Number(data.inventory || 0)
+        .toLocaleString("en-NG");
 
-        logsCount.textContent =
-            `${data.logs || 0} Logs`;
+        inventoryBreakdown.textContent =
 
-        toolsCount.textContent =
-            `${data.tools || 0} Tools`;
+        `${data.logs || 0} Logs • ${data.tools || 0} Tools`;
 
-        // -------------------------
+        // ==========================
         // Avatar
-        // -------------------------
+        // ==========================
 
-        if(data.photo){
+        if(data.photo && data.photo !== ""){
 
-            profileAvatar.innerHTML =
+            userAvatar.innerHTML =
 
             `<img src="${data.photo}"
-                  alt="Profile">`;
+            style="
+            width:100%;
+            height:100%;
+            border-radius:50%;
+            object-fit:cover;
+            ">`;
 
         }
 
@@ -223,244 +219,120 @@ function loadUser(){
 
             let initials = "DS";
 
-            const name =
-                data.name ||
-                data.firstName ||
-                currentUser.displayName ||
-                "";
+            const fullName =
 
-            if(name){
+            data.name ||
 
-                initials = name
-                    .trim()
-                    .split(" ")
-                    .map(word=>word[0])
-                    .join("")
-                    .substring(0,2)
-                    .toUpperCase();
+            user.displayName ||
 
-            }
+            user.email.split("@")[0];
 
-            profileAvatar.textContent = initials;
+            initials = fullName
+
+            .split(" ")
+
+            .map(word=>word.charAt(0))
+
+            .join("")
+
+            .substring(0,2)
+
+            .toUpperCase();
+
+            userAvatar.textContent = initials;
 
         }
 
     });
 
 }
-
-// =====================================
+// ======================================
 // Notifications
-// =====================================
+// ======================================
 
-function loadNotifications(){
+function loadNotifications(user){
 
-    const q = query(
-
-        collection(db,"notifications"),
-
-        where("uid","==",currentUser.uid),
-
-        where("read","==",false)
-
+    const notificationRef = doc(
+        db,
+        "users",
+        user.uid
     );
 
-    onSnapshot(q,(snapshot)=>{
+    onSnapshot(notificationRef,(snapshot)=>{
 
-        notificationCount.textContent =
-            snapshot.size;
+        if(!snapshot.exists()) return;
 
-    });
+        const data = snapshot.data();
 
-}
+        const unread = data.unreadNotifications || 0;
 
-// =====================================
-// Profile Click
-// =====================================
+        if(unread > 0){
 
-profileAvatar.onclick = ()=>{
+            notificationCount.style.display = "flex";
 
-    location.href="profile.html";
-
-}
-
-// =====================================
-// Notification Click
-// =====================================
-
-document
-.getElementById("notificationBtn")
-.onclick=()=>{
-
-    location.href="notifications.html";
-
-}
-// =====================================
-// Part 3
-// Recent Orders
-// =====================================
-
-const recentOrders = document.getElementById("recentOrders");
-
-function loadOrders(){
-
-    const q = query(
-
-        collection(db,"orders"),
-
-        where("uid","==",currentUser.uid),
-
-        orderBy("createdAt","desc"),
-
-        limit(5)
-
-    );
-
-    onSnapshot(q,(snapshot)=>{
-
-        recentOrders.innerHTML="";
-
-        if(snapshot.empty){
-
-            recentOrders.innerHTML=`
-
-            <div class="empty-card">
-
-                <i class="fa-solid fa-bag-shopping"></i>
-
-                <h4>No orders yet</h4>
-
-                <p>
-
-                    Your purchases will appear here once you place an order.
-
-                </p>
-
-            </div>
-
-            `;
-
-            return;
+            notificationCount.textContent = unread;
 
         }
 
-        snapshot.forEach((docSnap)=>{
+        else{
 
-            const order = docSnap.data();
+            notificationCount.style.display = "none";
 
-            const amount = Number(order.amount || 0)
-            .toLocaleString("en-NG");
-
-            const status =
-                (order.status || "Pending").toLowerCase();
-
-            recentOrders.innerHTML += `
-
-            <div class="order-card">
-
-                <div class="order-left">
-
-                    <div class="order-icon">
-
-                        <i class="fa-solid fa-box"></i>
-
-                    </div>
-
-                    <div class="order-info">
-
-                        <h4>
-
-                            ${order.productName || "Digital Product"}
-
-                        </h4>
-
-                        <p>
-
-                            ${order.category || "Purchase"}
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div class="order-right">
-
-                    <h5>
-
-                        ₦${amount}
-
-                    </h5>
-
-                    <span class="order-status ${status}">
-
-                        ${order.status || "Pending"}
-
-                    </span>
-
-                </div>
-
-            </div>
-
-            `;
-
-        });
+        }
 
     });
 
 }
 
-// =====================================
-// Quick Action Buttons
-// =====================================
+// ======================================
+// Authentication
+// ======================================
 
-document.getElementById("buyLogs").onclick=()=>{
+onAuthStateChanged(auth,(user)=>{
 
-    location.href="store.html";
+    if(!user){
 
-};
+        window.location.href="login.html";
 
-document.getElementById("buyTools").onclick=()=>{
+        return;
 
-    location.href="tools.html";
+    }
 
-};
+    loadUser(user);
 
-document.getElementById("topupWallet").onclick=()=>{
+    loadNotifications(user);
 
-    location.href="wallet.html";
+    setTimeout(hideLoader,1200);
 
-};
+});
 
-document.getElementById("support").onclick=()=>{
-
-    location.href="support.html";
-
-};
-
-// =====================================
+// ======================================
 // Logout
-// =====================================
+// ======================================
 
-logoutBtn.onclick = async()=>{
+logoutBtn.addEventListener("click",async()=>{
 
-    const confirmLogout = confirm(
+    const logout = confirm(
 
-        "Are you sure you want to logout?"
+        "Do you want to logout?"
 
     );
 
-    if(!confirmLogout) return;
+    if(!logout) return;
+
+    showLoader();
 
     try{
 
         await signOut(auth);
 
-        location.href="login.html";
+        window.location.href="login.html";
 
     }
 
     catch(error){
+
+        hideLoader();
 
         alert("Unable to logout.");
 
@@ -468,156 +340,58 @@ logoutBtn.onclick = async()=>{
 
     }
 
-};
-// =====================================
-// Part 4
-// Theme, Support & Final Functions
-// =====================================
+});
 
+// ======================================
+// Navigation
+// ======================================
+
+document
+.querySelector(".wallet-card a")
+?.addEventListener("click",()=>{
+
+    window.location.href="wallet.html";
+
+});
+
+userAvatar.addEventListener("click",()=>{
+
+    window.location.href="profile.html";
+
+});
+
+document
+.querySelector(".notification-btn")
+.addEventListener("click",()=>{
+
+    window.location.href="notifications.html";
+
+});
+
+// ======================================
 // Theme
+// ======================================
 
 const themeToggle = document.getElementById("themeToggle");
-
-if(localStorage.getItem("theme")==="dark"){
-
-    document.body.classList.add("dark");
-
-    themeToggle.innerHTML=`
-        <i class="fa-solid fa-sun"></i>
-    `;
-
-}
 
 themeToggle.addEventListener("click",()=>{
 
     document.body.classList.toggle("dark");
 
-    if(document.body.classList.contains("dark")){
+    localStorage.setItem(
 
-        localStorage.setItem("theme","dark");
+        "theme",
 
-        themeToggle.innerHTML=`
-            <i class="fa-solid fa-sun"></i>
-        `;
-
-    }
-
-    else{
-
-        localStorage.setItem("theme","light");
-
-        themeToggle.innerHTML=`
-            <i class="fa-solid fa-moon"></i>
-        `;
-
-    }
-
-});
-
-// =====================================
-// Support
-// =====================================
-
-// CHANGE THESE TO YOUR DETAILS
-
-const whatsappNumber="2348000000000";
-
-const telegramUsername="DigiSphere";
-
-const supportEmail="support@digisphere.com";
-
-// WhatsApp
-
-document
-.getElementById("whatsappBtn")
-.addEventListener("click",(e)=>{
-
-    e.preventDefault();
-
-    window.open(
-
-        `https://wa.me/${whatsappNumber}`,
-
-        "_blank"
+        document.body.classList.contains("dark")
+        ? "dark"
+        : "light"
 
     );
 
 });
 
-// Telegram
+if(localStorage.getItem("theme")==="dark"){
 
-document
-.getElementById("telegramBtn")
-.addEventListener("click",(e)=>{
+    document.body.classList.add("dark");
 
-    e.preventDefault();
-
-    window.open(
-
-        `https://t.me/${telegramUsername}`,
-
-        "_blank"
-
-    );
-
-});
-
-// Email
-
-document
-.getElementById("supportEmail")
-.textContent=supportEmail;
-
-// =====================================
-// Auto Close Sidebar
-// =====================================
-
-document
-.querySelectorAll(".sidebar-links a")
-.forEach(link=>{
-
-    link.addEventListener("click",()=>{
-
-        sidebar.classList.remove("active");
-
-        overlay.classList.remove("active");
-
-    });
-
-});
-
-// =====================================
-// Refresh Dashboard Every Minute
-// =====================================
-
-setInterval(()=>{
-
-    if(currentUser){
-
-        loadNotifications();
-
-    }
-
-},60000);
-
-// =====================================
-// Finished Loading
-// =====================================
-
-window.addEventListener("load",()=>{
-
-    setTimeout(()=>{
-
-        loader.style.opacity="0";
-
-        setTimeout(()=>{
-
-            loader.style.display="none";
-
-        },300);
-
-    },1500);
-
-});
-
-console.log("DigiSphere Dashboard Loaded Successfully");
+}
