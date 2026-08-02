@@ -2,28 +2,24 @@ import { auth, db } from "./firebase.js";
 
 import {
     onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
 import {
     doc,
     getDoc,
-    onSnapshot,
     collection,
     query,
     where,
     orderBy,
     limit,
-    getDocs,
+    onSnapshot,
     addDoc,
     serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 /*==================================
 ELEMENTS
 ==================================*/
-
-const loadingScreen =
-document.getElementById("loadingScreen");
 
 const walletBalance =
 document.getElementById("walletBalance");
@@ -34,11 +30,11 @@ document.getElementById("amountInput");
 const openPaymentBtn =
 document.getElementById("openPaymentBtn");
 
-const paymentModal =
-document.getElementById("paymentModal");
-
 const paymentOverlay =
 document.getElementById("paymentOverlay");
+
+const paymentModal =
+document.getElementById("paymentModal");
 
 const paymentAmount =
 document.getElementById("paymentAmount");
@@ -64,17 +60,11 @@ document.getElementById("closePayment");
 const cancelPayment =
 document.getElementById("cancelPayment");
 
-const minimumToast =
-document.getElementById("minimumToast");
-
 const transactionList =
 document.getElementById("transactionList");
 
 const quickButtons =
 document.querySelectorAll(".amount-btn");
-
-const backBtn =
-document.getElementById("backBtn");
 
 /*==================================
 GLOBAL VARIABLES
@@ -82,55 +72,30 @@ GLOBAL VARIABLES
 
 let currentUser = null;
 
+let currentAmount = 0;
+
 let currentReference = "";
 
-let currentBank = "PalmPay";
+let currentBank = "";
 
-let currentAccountNumber = "9117412352";
+const accountName =
+"Ogaga Blessing Idoghe";
 
-const accountName = "Ogaga Blessing Idoghe";
+const whatsappNumber =
+"2349117412352";
 
-const whatsappNumber = "2349117412352";
+const accountNo =
+"9117412352";
 
 /*==================================
 HELPERS
 ==================================*/
 
-function hideLoading(){
+function formatMoney(value){
 
-    if(!loadingScreen) return;
+    return "₦" +
 
-    loadingScreen.classList.add("hide");
-
-    setTimeout(()=>{
-
-        loadingScreen.style.display="none";
-
-    },300);
-
-}
-
-function showLoading(){
-
-    if(!loadingScreen) return;
-
-    loadingScreen.style.display="flex";
-
-    loadingScreen.classList.remove("hide");
-
-}
-
-function showMinimumToast(){
-
-    if(!minimumToast) return;
-
-    minimumToast.classList.add("show");
-
-    setTimeout(()=>{
-
-        minimumToast.classList.remove("show");
-
-    },3000);
+    Number(value).toLocaleString("en-NG");
 
 }
 
@@ -140,36 +105,45 @@ function generateReference(){
 
 }
 
-function formatMoney(amount){
-
-    return "₦" +
-
-    Number(amount).toLocaleString("en-NG");
-
-}
 /*==================================
-BACK BUTTON
+BANK ROTATION
 ==================================*/
 
-if(backBtn){
+function getBank(){
 
-    backBtn.addEventListener("click",()=>{
+    const lastBank =
+    localStorage.getItem("lastBank");
 
-        window.location.href="dashboard.html";
+    if(lastBank === "PalmPay"){
 
-    });
+        currentBank = "OPay";
+
+    }else{
+
+        currentBank = "PalmPay";
+
+    }
+
+    localStorage.setItem(
+
+        "lastBank",
+
+        currentBank
+
+    );
+
+    return currentBank;
 
 }
-
 /*==================================
 AUTH
 ==================================*/
 
-onAuthStateChanged(auth,async(user)=>{
+onAuthStateChanged(auth, async(user)=>{
 
     if(!user){
 
-        window.location.replace("login.html");
+        window.location.href = "login.html";
 
         return;
 
@@ -177,27 +151,9 @@ onAuthStateChanged(auth,async(user)=>{
 
     currentUser = user;
 
-    try{
+    loadWallet(user.uid);
 
-        await loadWallet(user.uid);
-
-        watchWallet(user.uid);
-
-        loadTransactions(user.uid);
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-    }
-
-    finally{
-
-        hideLoading();
-
-    }
+    loadTransactions(user.uid);
 
 });
 
@@ -207,27 +163,37 @@ LOAD WALLET
 
 async function loadWallet(userId){
 
-    const userRef = doc(db,"users",userId);
+    try{
 
-    const snap = await getDoc(userRef);
+        const userRef = doc(db,"users",userId);
 
-    if(!snap.exists()) return;
+        const snap = await getDoc(userRef);
 
-    const data = snap.data();
+        if(!snap.exists()) return;
 
-    const balance = Number(
+        const data = snap.data();
 
-        data.wallet ||
+        const balance = Number(
 
-        data.walletBalance ||
+            data.wallet ||
 
-        0
+            data.walletBalance ||
 
-    );
+            0
 
-    walletBalance.textContent =
+        );
 
-    formatMoney(balance);
+        walletBalance.textContent =
+
+        formatMoney(balance);
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+    }
 
 }
 
@@ -263,13 +229,27 @@ function watchWallet(userId){
 
 }
 
+onAuthStateChanged(auth,(user)=>{
+
+    if(user){
+
+        watchWallet(user.uid);
+
+    }
+
+});
+
 /*==================================
 QUICK AMOUNT BUTTONS
 ==================================*/
 
 quickButtons.forEach(button=>{
 
-    button.addEventListener("click",()=>{
+    button.type = "button";
+
+    button.addEventListener("click",(e)=>{
+
+        e.preventDefault();
 
         quickButtons.forEach(btn=>{
 
@@ -283,35 +263,39 @@ quickButtons.forEach(button=>{
 
         button.dataset.amount;
 
-        amountInput.dispatchEvent(
+        currentAmount =
 
-            new Event("input")
-
-        );
+        Number(button.dataset.amount);
 
     });
 
 });
 
 /*==================================
-AMOUNT INPUT
+INPUT CHANGED
 ==================================*/
 
 amountInput.addEventListener("input",()=>{
 
-    const amount = Number(
+    currentAmount =
 
-        amountInput.value || 0
-
-    );
+    Number(amountInput.value || 0);
 
     quickButtons.forEach(btn=>{
 
-        if(btn.dataset.amount===amountInput.value){
+        if(
+
+            btn.dataset.amount ===
+
+            amountInput.value
+
+        ){
 
             btn.classList.add("active");
 
-        }else{
+        }
+
+        else{
 
             btn.classList.remove("active");
 
@@ -319,58 +303,46 @@ amountInput.addEventListener("input",()=>{
 
     });
 
-    if(amount>=1000){
-
-        if(minimumToast){
-
-            minimumToast.classList.remove("show");
-
-        }
-
-    }
-
 });
-/*==================================
-BANK ROTATION
-==================================*/
-
-function getNextBank(){
-
-    const lastBank = localStorage.getItem("lastBank");
-
-    if(lastBank === "PalmPay"){
-
-        currentBank = "OPay";
-
-    }else{
-
-        currentBank = "PalmPay";
-
-    }
-
-    localStorage.setItem("lastBank", currentBank);
-
-    return currentBank;
-
-}
-
 /*==================================
 OPEN PAYMENT
 ==================================*/
 
 openPaymentBtn.addEventListener("click",()=>{
 
-    const amount = Number(amountInput.value || 0);
+    currentAmount = Number(amountInput.value || 0);
 
-    if(amount < 1000){
+    if(currentAmount < 1000){
 
-        showMinimumToast();
+        alert("Minimum wallet funding is ₦1,000.");
+
+        amountInput.focus();
 
         return;
 
     }
 
-    /* Button Loading */
+    /* Generate Reference */
+
+    currentReference = generateReference();
+
+    paymentReference.textContent = currentReference;
+
+    /* Amount */
+
+    paymentAmount.textContent =
+
+    formatMoney(currentAmount);
+
+    /* Rotate Bank */
+
+    bankName.textContent = getBank();
+
+    /* Account Number */
+
+    accountNumber.textContent = accountNo;
+
+    /* Loading Effect */
 
     const oldText = openPaymentBtn.innerHTML;
 
@@ -378,7 +350,7 @@ openPaymentBtn.addEventListener("click",()=>{
 
     openPaymentBtn.innerHTML = `
 
-        <span class="btn-spinner"></span>
+        <i class="ri-loader-4-line ri-spin"></i>
 
         Opening...
 
@@ -386,40 +358,20 @@ openPaymentBtn.addEventListener("click",()=>{
 
     setTimeout(()=>{
 
-        openPaymentBtn.disabled = false;
-
         openPaymentBtn.innerHTML = oldText;
 
-        /* Generate Reference */
-
-        currentReference = generateReference();
-
-        paymentReference.textContent = currentReference;
-
-        /* Amount */
-
-        paymentAmount.textContent = formatMoney(amount);
-
-        /* Rotate Bank */
-
-        bankName.textContent = getNextBank();
-
-        /* Account Number */
-
-        accountNumber.textContent = currentAccountNumber;
-
-        /* Open Popup */
+        openPaymentBtn.disabled = false;
 
         paymentOverlay.classList.add("active");
 
         paymentModal.classList.add("active");
 
-    },1200);
+    },1000);
 
 });
 
 /*==================================
-CLOSE PAYMENT
+CLOSE POPUP
 ==================================*/
 
 function closePopup(){
@@ -430,39 +382,41 @@ function closePopup(){
 
 }
 
-if(closePayment){
+closePayment.addEventListener(
 
-    closePayment.addEventListener("click",closePopup);
+    "click",
 
-}
+    closePopup
 
-if(cancelPayment){
+);
 
-    cancelPayment.addEventListener("click",closePopup);
+cancelPayment.addEventListener(
 
-}
+    "click",
 
-if(paymentOverlay){
+    closePopup
 
-    paymentOverlay.addEventListener("click",closePopup);
+);
 
-}
+paymentOverlay.addEventListener(
+
+    "click",
+
+    closePopup
+
+);
 
 /*==================================
-COPY ACCOUNT
+COPY ACCOUNT NUMBER
 ==================================*/
 
 copyAccount.addEventListener("click",async()=>{
 
     try{
 
-        await navigator.clipboard.writeText(
+        await navigator.clipboard.writeText(accountNo);
 
-            currentAccountNumber
-
-        );
-
-        copyAccount.textContent = "Copied ✓";
+        copyAccount.textContent = "Copied";
 
         setTimeout(()=>{
 
@@ -481,18 +435,31 @@ copyAccount.addEventListener("click",async()=>{
 });
 /*==================================
 SEND PROOF TO WHATSAPP
-SAVE TRANSACTION
+CREATE TRANSACTION
 ==================================*/
 
 sendProofBtn.addEventListener("click", async()=>{
 
-    if(!currentUser) return;
+    if(!currentUser){
+
+        alert("Please login again.");
+
+        return;
+
+    }
 
     try{
 
-        const amount = Number(amountInput.value);
+        sendProofBtn.disabled = true;
 
-        /* Save Transaction */
+        const oldText = sendProofBtn.innerHTML;
+
+        sendProofBtn.innerHTML = `
+            <i class="ri-loader-4-line ri-spin"></i>
+            Creating Transaction...
+        `;
+
+        /* SAVE TO FIREBASE */
 
         await addDoc(
 
@@ -504,13 +471,13 @@ sendProofBtn.addEventListener("click", async()=>{
 
                 type: "Wallet Top-up",
 
-                amount: amount,
+                amount: currentAmount,
 
                 bank: currentBank,
 
                 accountName: accountName,
 
-                accountNumber: currentAccountNumber,
+                accountNumber: accountNo,
 
                 reference: currentReference,
 
@@ -522,15 +489,15 @@ sendProofBtn.addEventListener("click", async()=>{
 
         );
 
-        /* WhatsApp Message */
+        /* OPEN WHATSAPP */
 
         const message =
 
 `Hello DigiSphere,
 
-I have completed a wallet funding.
+I have funded my wallet.
 
-Amount: ${formatMoney(amount)}
+Amount: ${formatMoney(currentAmount)}
 
 Bank: ${currentBank}
 
@@ -538,7 +505,9 @@ Reference: ${currentReference}
 
 Account Name: ${accountName}
 
-Please find my payment receipt attached for confirmation.
+Account Number: ${accountNo}
+
+I have attached my payment receipt for confirmation.
 
 Thank you.`;
 
@@ -550,9 +519,13 @@ Thank you.`;
 
         );
 
-        closePopup();
+        sendProofBtn.innerHTML = oldText;
+
+        sendProofBtn.disabled = false;
 
         amountInput.value = "";
+
+        currentAmount = 0;
 
         quickButtons.forEach(btn=>{
 
@@ -560,13 +533,22 @@ Thank you.`;
 
         });
 
+        closePopup();
+
     }
 
     catch(error){
 
         console.error(error);
 
-        alert("Unable to create transaction.");
+        alert("Unable to submit payment.");
+
+        sendProofBtn.disabled = false;
+
+        sendProofBtn.innerHTML = `
+            <i class="ri-whatsapp-line"></i>
+            Send Proof to WhatsApp
+        `;
 
     }
 
@@ -586,25 +568,27 @@ function loadTransactions(userId){
 
         orderBy("createdAt","desc"),
 
-        limit(10)
+        limit(20)
 
     );
 
     onSnapshot(q,(snapshot)=>{
 
+        transactionList.innerHTML = "";
+
         if(snapshot.empty){
 
             transactionList.innerHTML = `
 
-                <div class="empty-transactions">
+            <div class="empty-transactions">
 
-                    <i class="ri-exchange-funds-line"></i>
+                <i class="ri-exchange-funds-line"></i>
 
-                    <h3>No Transactions Yet</h3>
+                <h3>No Transactions Yet</h3>
 
-                    <p>Your wallet funding history will appear here.</p>
+                <p>Your wallet funding history will appear here.</p>
 
-                </div>
+            </div>
 
             `;
 
@@ -612,83 +596,69 @@ function loadTransactions(userId){
 
         }
 
-        transactionList.innerHTML = "";
+        snapshot.forEach((docSnap)=>{
 
-        snapshot.forEach((docItem)=>{
-
-            const item = docItem.data();
-
-            const amount =
-
-                formatMoney(item.amount || 0);
-
-            const status =
-
-                item.status || "Pending";
-
-            const statusClass =
-
-                status.toLowerCase();
+            const item = docSnap.data();
 
             let date = "";
 
             if(item.createdAt?.toDate){
 
                 date = item.createdAt
-                    .toDate()
-                    .toLocaleString("en-GB");
+                .toDate()
+                .toLocaleString("en-GB");
 
             }
 
             transactionList.innerHTML += `
 
-                <div class="transaction-card">
+            <div class="transaction-card">
 
-                    <div class="transaction-left">
+                <div class="transaction-left">
 
-                        <div class="transaction-icon">
+                    <div class="transaction-icon">
 
-                            <i class="ri-wallet-3-line"></i>
+                        <i class="ri-wallet-3-line"></i>
 
-                        </div>
+                    </div>
 
-                        <div class="transaction-info">
+                    <div class="transaction-info">
 
-                            <h3>
+                        <h3>
 
-                                ${item.type}
+                            ${item.type}
 
-                            </h3>
+                        </h3>
 
-                            <p>
+                        <p>
 
-                                ${item.reference}
+                            ${item.reference}
 
-                                ${date ? "• "+date : ""}
+                            ${date ? " • "+date : ""}
 
-                            </p>
+                        </p>
 
-                            <div class="transaction-bottom">
+                        <div class="transaction-bottom">
 
-                                <span class="transaction-amount">
+                            <span class="transaction-amount">
 
-                                    ${amount}
+                                ${formatMoney(item.amount)}
 
-                                </span>
+                            </span>
 
-                                <span class="status ${statusClass}">
+                            <span class="status ${String(item.status).toLowerCase()}">
 
-                                    ${status}
+                                ${item.status}
 
-                                </span>
-
-                            </div>
+                            </span>
 
                         </div>
 
                     </div>
 
                 </div>
+
+            </div>
 
             `;
 
@@ -697,19 +667,3 @@ function loadTransactions(userId){
     });
 
 }
-
-/*==================================
-GLOBAL ERROR HANDLER
-==================================*/
-
-window.addEventListener("error",()=>{
-
-    hideLoading();
-
-});
-
-window.addEventListener("unhandledrejection",()=>{
-
-    hideLoading();
-
-});
