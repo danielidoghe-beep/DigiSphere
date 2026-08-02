@@ -1,10 +1,10 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 import {
     getAuth,
     onAuthStateChanged,
     signOut
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
 import {
     getFirestore,
@@ -16,11 +16,11 @@ import {
     orderBy,
     limit,
     getDocs
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
-/* ==========================================
+/* ===========================
    FIREBASE
-========================================== */
+=========================== */
 
 const firebaseConfig = {
     apiKey: "AIzaSyDnpsEIlXwPLSCJAGMS7feM2JMhmxzCCfs",
@@ -38,51 +38,61 @@ const auth = getAuth(app);
 
 const db = getFirestore(app);
 
-/* ==========================================
+/* ===========================
    ELEMENTS
-========================================== */
+=========================== */
 
 const loader = document.getElementById("loader");
 
-const menuBtn = document.getElementById("menuBtn");
-const closeSidebar = document.getElementById("closeSidebar");
-const sidebar = document.getElementById("sidebar");
 const overlay = document.getElementById("overlay");
+
+const sidebar = document.getElementById("sidebar");
+
+const menuBtn = document.getElementById("menuBtn");
+
+const closeSidebar = document.getElementById("closeSidebar");
 
 const logoutBtn = document.getElementById("logoutBtn");
 
+const themeToggle = document.getElementById("themeToggle");
+
 const userName = document.getElementById("userName");
+
 const userAvatar = document.getElementById("userAvatar");
 
 const walletBalance = document.getElementById("walletBalance");
+
 const topWallet = document.getElementById("topWallet");
 
 const purchaseCount = document.getElementById("purchaseCount");
 
 const inventoryCount = document.getElementById("inventoryCount");
+
 const inventoryBreakdown = document.getElementById("inventoryBreakdown");
 
-const notificationCount =
-document.getElementById("notificationCount");
+const notificationCount = document.getElementById("notificationCount");
 
-/* ==========================================
+const notificationDropdown = document.getElementById("notificationDropdown");
+
+const notificationList = document.getElementById("notificationList");
+
+const viewAllNotifications = document.getElementById("viewAllNotifications");
+
+const recentOrders = document.getElementById("recentOrders");
+
+/* ===========================
    LOADER
-========================================== */
+=========================== */
 
 function showLoader(){
 
-    if(loader){
+    loader.style.display = "flex";
 
-        loader.style.display = "flex";
-        loader.style.opacity = "1";
-
-    }
+    loader.style.opacity = "1";
 
 }
 
 function hideLoader(){
-
-    if(!loader) return;
 
     loader.style.opacity = "0";
 
@@ -94,235 +104,372 @@ function hideLoader(){
 
 }
 
-/* ==========================================
+/* ===========================
    SIDEBAR
-========================================== */
+=========================== */
 
-menuBtn?.addEventListener("click",()=>{
-
-    sidebar.classList.add("active");
-    overlay.classList.add("active");
-
-});
-
-closeSidebar?.addEventListener("click",closeSidebarMenu);
-
-overlay?.addEventListener("click",closeSidebarMenu);
-
-function closeSidebarMenu(){
+function closeMenu(){
 
     sidebar.classList.remove("active");
+
     overlay.classList.remove("active");
 
 }
 
-/* ==========================================
+menuBtn.addEventListener("click",()=>{
+
+    sidebar.classList.add("active");
+
+    overlay.classList.add("active");
+
+});
+
+closeSidebar.addEventListener("click",closeMenu);
+
+overlay.addEventListener("click",closeMenu);
+
+/* ===========================
+   THEME
+=========================== */
+
+if(localStorage.getItem("theme")==="dark"){
+
+    document.body.classList.add("dark");
+
+}
+
+themeToggle.addEventListener("click",()=>{
+
+    document.body.classList.toggle("dark");
+
+    localStorage.setItem(
+
+        "theme",
+
+        document.body.classList.contains("dark")
+
+        ? "dark"
+
+        : "light"
+
+    );
+
+});
+/* ===========================
    AUTHENTICATION
-========================================== */
+=========================== */
 
-onAuthStateChanged(auth,(user)=>{
+onAuthStateChanged(auth, async (user) => {
 
-    if(!user){
+    if (!user) {
 
-        window.location.replace("login.html");
+        window.location.href = "login.html";
+
         return;
 
     }
 
-    loadUser(user);
+    try {
 
-    loadNotifications(user);
+        await Promise.all([
 
-    loadRecentOrders(user);
+            loadUser(user),
 
-});
-/* ==========================================
-   LOAD USER
-========================================== */
+            loadNotifications(user),
 
-function loadUser(user){
+            loadRecentOrders(user)
 
-    const userRef = doc(db, "users", user.uid);
+        ]);
 
-    onSnapshot(userRef, (snapshot)=>{
+    }
 
-        /* If the user document doesn't exist,
-           don't keep showing the loader forever. */
-
-        if(!snapshot.exists()){
-
-            hideLoader();
-            return;
-
-        }
-
-        const data = snapshot.data();
-
-        /* ==========================
-           USER NAME
-        ========================== */
-
-        let firstName = "";
-
-        if(data.firstName){
-
-            firstName = data.firstName;
-
-        }
-
-        else if(data.name){
-
-            firstName = data.name.split(" ")[0];
-
-        }
-
-        else if(user.displayName){
-
-            firstName = user.displayName.split(" ")[0];
-
-        }
-
-        else{
-
-            firstName = user.email.split("@")[0];
-
-        }
-
-        userName.textContent = firstName;
-
-        /* ==========================
-           WALLET
-        ========================== */
-
-        const balance = Number(data.wallet || 0);
-
-        walletBalance.textContent =
-            "₦" + balance.toLocaleString("en-NG");
-
-        topWallet.textContent =
-            balance.toLocaleString("en-NG");
-
-        /* ==========================
-           PURCHASES
-        ========================== */
-
-        purchaseCount.textContent =
-            Number(data.totalOrders || 0)
-            .toLocaleString("en-NG");
-
-        /* ==========================
-           INVENTORY
-        ========================== */
-
-        inventoryCount.textContent =
-            Number(data.inventory || 0)
-            .toLocaleString("en-NG");
-
-        inventoryBreakdown.textContent =
-            `${data.logs || 0} Logs • ${data.tools || 0} Tools`;
-
-        /* ==========================
-           AVATAR
-        ========================== */
-
-        if(data.photo){
-
-            userAvatar.innerHTML = `
-                <img
-                    src="${data.photo}"
-                    alt="Avatar"
-                    style="
-                        width:100%;
-                        height:100%;
-                        object-fit:cover;
-                        border-radius:50%;
-                    ">
-            `;
-
-        }else{
-
-            const fullName =
-                data.name ||
-                user.displayName ||
-                user.email.split("@")[0];
-
-            const initials = fullName
-                .trim()
-                .split(" ")
-                .map(word => word.charAt(0))
-                .join("")
-                .substring(0,2)
-                .toUpperCase();
-
-            userAvatar.textContent = initials;
-
-        }
-
-        /* ==========================
-           PAGE READY
-        ========================== */
-
-        hideLoader();
-
-    }, (error)=>{
+    catch (error) {
 
         console.error(error);
 
-        hideLoader();
+    }
+
+    hideLoader();
+
+});
+
+/* ===========================
+   LOAD USER
+=========================== */
+
+async function loadUser(user){
+
+    return new Promise((resolve)=>{
+
+        const userRef = doc(db,"users",user.uid);
+
+        onSnapshot(userRef,(snapshot)=>{
+
+            if(!snapshot.exists()){
+
+                resolve();
+
+                return;
+
+            }
+
+            const data = snapshot.data();
+
+            /* Name */
+
+            let firstName = "";
+
+            if(data.firstName){
+
+                firstName = data.firstName;
+
+            }
+
+            else if(data.name){
+
+                firstName = data.name.split(" ")[0];
+
+            }
+
+            else if(user.displayName){
+
+                firstName = user.displayName.split(" ")[0];
+
+            }
+
+            else{
+
+                firstName = user.email.split("@")[0];
+
+            }
+
+            userName.textContent = firstName;
+
+            /* Wallet */
+
+            const balance = Number(data.wallet || 0);
+
+            walletBalance.textContent =
+                "₦" + balance.toLocaleString("en-NG");
+
+            topWallet.textContent =
+                balance.toLocaleString("en-NG");
+
+            /* Purchases */
+
+            purchaseCount.textContent =
+                Number(data.totalOrders || 0)
+                .toLocaleString("en-NG");
+
+            /* Inventory */
+
+            inventoryCount.textContent =
+                Number(data.inventory || 0)
+                .toLocaleString("en-NG");
+
+            inventoryBreakdown.textContent =
+
+                `${data.logs || 0} Logs • ${data.tools || 0} Tools`;
+
+            /* Avatar */
+
+            if(data.photoURL){
+
+                userAvatar.innerHTML =
+
+                `<img src="${data.photoURL}" alt="">`;
+
+            }
+
+            else if(user.photoURL){
+
+                userAvatar.innerHTML =
+
+                `<img src="${user.photoURL}" alt="">`;
+
+            }
+
+            else{
+
+                const fullName =
+
+                    data.name ||
+
+                    user.displayName ||
+
+                    user.email;
+
+                const initials =
+
+                    fullName
+
+                    .split(" ")
+
+                    .map(word=>word.charAt(0))
+
+                    .join("")
+
+                    .substring(0,2)
+
+                    .toUpperCase();
+
+                userAvatar.textContent = initials;
+
+            }
+
+            resolve();
+
+        });
 
     });
 
 }
-/* ==========================================
-   LOAD NOTIFICATIONS
-========================================== */
+/* ===========================
+   NOTIFICATIONS
+=========================== */
 
-function loadNotifications(user){
+async function loadNotifications(user){
 
-    const userRef = doc(db,"users",user.uid);
+    return new Promise((resolve)=>{
 
-    onSnapshot(userRef,(snapshot)=>{
+        const notificationQuery = query(
 
-        if(!snapshot.exists()){
+            collection(db,"notifications"),
 
-            notificationCount.style.display = "none";
-            return;
+            where("userId","==",user.uid),
 
-        }
+            orderBy("createdAt","desc"),
 
-        const data = snapshot.data();
+            limit(2)
 
-        const unread = Number(data.unreadNotifications || 0);
+        );
 
-        if(unread > 0){
+        onSnapshot(notificationQuery,(snapshot)=>{
 
-            notificationCount.style.display = "flex";
-            notificationCount.textContent = unread;
+            notificationList.innerHTML="";
 
-        }else{
+            if(snapshot.empty){
 
-            notificationCount.style.display = "none";
+                notificationCount.style.display="none";
 
-        }
+                notificationList.innerHTML=`
+
+                    <div class="empty-notification">
+
+                        No notifications yet
+
+                    </div>
+
+                `;
+
+                resolve();
+
+                return;
+
+            }
+
+            let unread=0;
+
+            snapshot.forEach(doc=>{
+
+                const data=doc.data();
+
+                if(!data.read){
+
+                    unread++;
+
+                }
+
+                notificationList.innerHTML+=`
+
+                <div class="notification-item">
+
+                    <h4>
+
+                        ${data.title || "Notification"}
+
+                    </h4>
+
+                    <p>
+
+                        ${data.message || ""}
+
+                    </p>
+
+                </div>
+
+                `;
+
+            });
+
+            if(unread>0){
+
+                notificationCount.style.display="flex";
+
+                notificationCount.textContent=unread;
+
+            }
+
+            else{
+
+                notificationCount.style.display="none";
+
+            }
+
+            resolve();
+
+        });
 
     });
 
 }
 
-/* ==========================================
+/* ===========================
+   NOTIFICATION DROPDOWN
+=========================== */
+
+document.querySelector(".notification-btn")
+
+.addEventListener("click",(e)=>{
+
+    e.stopPropagation();
+
+    notificationDropdown.classList.toggle("show");
+
+});
+
+document.addEventListener("click",(e)=>{
+
+    if(
+
+        !notificationDropdown.contains(e.target)
+
+        &&
+
+        !e.target.closest(".notification-btn")
+
+    ){
+
+        notificationDropdown.classList.remove("show");
+
+    }
+
+});
+
+viewAllNotifications.addEventListener("click",()=>{
+
+    window.location.href="notifications.html";
+
+});
+/* ===========================
    RECENT ORDERS
-========================================== */
+=========================== */
 
 async function loadRecentOrders(user){
 
-    const recentOrders =
-        document.getElementById("recentOrders");
-
-    if(!recentOrders) return;
-
     try{
 
-        const q = query(
+        const ordersQuery = query(
 
             collection(db,"orders"),
 
@@ -334,21 +481,21 @@ async function loadRecentOrders(user){
 
         );
 
-        const snapshot = await getDocs(q);
+        const snapshot = await getDocs(ordersQuery);
 
         if(snapshot.empty){
 
             recentOrders.innerHTML = `
 
-            <div class="empty-orders">
+                <div class="empty-orders">
 
-                <i class="fa-regular fa-bag-shopping"></i>
+                    <i class="fa-regular fa-bag-shopping"></i>
 
-                <h4>No orders yet</h4>
+                    <h4>No orders yet</h4>
 
-                <p>Your purchases will appear here.</p>
+                    <p>Your purchases will appear here.</p>
 
-            </div>
+                </div>
 
             `;
 
@@ -358,41 +505,33 @@ async function loadRecentOrders(user){
 
         let html = "";
 
-        snapshot.forEach((document)=>{
+        snapshot.forEach((doc)=>{
 
-            const order = document.data();
+            const order = doc.data();
 
             html += `
 
             <div class="order-item">
 
-                <div class="order-left">
+                <div class="order-image">
 
-                    <img
-                        src="${order.image || ""}"
-                        class="order-image"
-                    >
-
-                    <div>
-
-                        <h4>
-
-                            ${order.title || "Product"}
-
-                        </h4>
-
-                        <small>
-
-                            ₦${Number(order.amount || 0)
-                            .toLocaleString("en-NG")}
-
-                        </small>
-
-                    </div>
+                    <img src="${order.image || "images/default-product.png"}" alt="">
 
                 </div>
 
-                <span class="order-status">
+                <div class="order-info">
+
+                    <h4>${order.title || "Untitled Product"}</h4>
+
+                    <small>
+
+                        ₦${Number(order.amount || 0).toLocaleString("en-NG")}
+
+                    </small>
+
+                </div>
+
+                <span class="status ${order.status || "completed"}">
 
                     ${order.status || "Completed"}
 
@@ -410,22 +549,25 @@ async function loadRecentOrders(user){
 
     catch(error){
 
-        console.error(error);
+        console.error("Recent Orders Error:",error);
 
     }
 
 }
-/* ==========================================
+
+/* ===========================
    LOGOUT
-========================================== */
+=========================== */
 
-logoutBtn?.addEventListener("click", async () => {
+logoutBtn.addEventListener("click",async()=>{
 
-    const logout = confirm(
-        "Are you sure you want to logout?"
+    const confirmLogout = confirm(
+
+        "Do you want to logout?"
+
     );
 
-    if(!logout) return;
+    if(!confirmLogout) return;
 
     showLoader();
 
@@ -433,15 +575,15 @@ logoutBtn?.addEventListener("click", async () => {
 
         await signOut(auth);
 
-        window.location.replace("login.html");
+        window.location.href="login.html";
 
     }
 
     catch(error){
 
-        console.error(error);
-
         hideLoader();
+
+        console.error(error);
 
         alert("Unable to logout.");
 
@@ -449,13 +591,26 @@ logoutBtn?.addEventListener("click", async () => {
 
 });
 
-/* ==========================================
-   NAVIGATION
-========================================== */
+/* ===========================
+   PROFILE
+=========================== */
 
-document
-.querySelectorAll("[data-page]")
-.forEach(button=>{
+userAvatar.addEventListener("click",()=>{
+
+    window.location.href="profile.html";
+
+});
+
+/* ===========================
+   END
+=========================== */
+
+console.log("Dashboard Loaded Successfully");
+/* ===========================
+   PAGE LINKS
+=========================== */
+
+document.querySelectorAll("[data-page]").forEach(button=>{
 
     button.addEventListener("click",()=>{
 
@@ -471,75 +626,66 @@ document
 
 });
 
-document
-.querySelector(".notification-btn")
-?.addEventListener("click",()=>{
+/* ===========================
+   REFRESH WALLET
+=========================== */
 
-    window.location.href = "notifications.html";
+function refreshWallet(balance){
 
-});
+    walletBalance.textContent =
+        "₦" + Number(balance).toLocaleString("en-NG");
 
-userAvatar?.addEventListener("click",()=>{
-
-    window.location.href = "profile.html";
-
-});
-
-/* Wallet Card */
-
-document
-.querySelector(".summary-card a")
-?.addEventListener("click",(e)=>{
-
-    e.preventDefault();
-
-    window.location.href="wallet.html";
-
-});
-
-/* ==========================================
-   THEME
-========================================== */
-
-const themeToggle =
-document.getElementById("themeToggle");
-
-function applyTheme(theme){
-
-    if(theme==="dark"){
-
-        document.body.classList.add("dark");
-
-    }else{
-
-        document.body.classList.remove("dark");
-
-    }
+    topWallet.textContent =
+        Number(balance).toLocaleString("en-NG");
 
 }
 
-applyTheme(localStorage.getItem("theme") || "light");
+/* ===========================
+   REFRESH INVENTORY
+=========================== */
 
-themeToggle?.addEventListener("click",()=>{
+function refreshInventory(data){
 
-    const dark =
-        document.body.classList.toggle("dark");
+    inventoryCount.textContent =
+        Number(data.inventory || 0)
+        .toLocaleString("en-NG");
 
-    localStorage.setItem(
+    inventoryBreakdown.textContent =
+        `${data.logs || 0} Logs • ${data.tools || 0} Tools`;
 
-        "theme",
+}
 
-        dark ? "dark" : "light"
+/* ===========================
+   REFRESH PURCHASES
+=========================== */
 
-    );
+function refreshPurchases(total){
+
+    purchaseCount.textContent =
+        Number(total || 0)
+        .toLocaleString("en-NG");
+
+}
+
+/* ===========================
+   ONLINE STATUS
+=========================== */
+
+window.addEventListener("offline",()=>{
+
+    console.log("Offline");
 
 });
 
-/* ==========================================
-   PAGE SAFETY
-========================================== */
+window.addEventListener("online",()=>{
 
-/* Never leave the loader forever */
+    console.log("Online");
+
+});
+
+/* ===========================
+   HIDE LOADER
+=========================== */
 
 window.addEventListener("load",()=>{
 
@@ -547,162 +693,8 @@ window.addEventListener("load",()=>{
 
         hideLoader();
 
-    },2000);
+    },500);
 
 });
 
-/* Hide loader if any unexpected error occurs */
-
-window.addEventListener("error",()=>{
-
-    hideLoader();
-
-});
-
-window.addEventListener("unhandledrejection",()=>{
-
-    hideLoader();
-
-});
-/* ==========================================
-   LIVE GREETING
-========================================== */
-
-const welcomeText =
-document.getElementById("welcomeText");
-
-function updateGreeting(){
-
-    if(!welcomeText) return;
-
-    const hour = new Date().getHours();
-
-    let greeting = "Welcome";
-
-    if(hour < 12){
-
-        greeting = "Good morning";
-
-    }else if(hour < 17){
-
-        greeting = "Good afternoon";
-
-    }else{
-
-        greeting = "Good evening";
-
-    }
-
-    welcomeText.textContent = greeting;
-
-}
-
-updateGreeting();
-
-/* ==========================================
-   ACTIVE MENU
-========================================== */
-
-const currentPage =
-window.location.pathname.split("/").pop();
-
-document.querySelectorAll("#sidebar a").forEach(link=>{
-
-    const href = link.getAttribute("href");
-
-    if(href === currentPage){
-
-        link.classList.add("active");
-
-    }
-
-});
-
-/* ==========================================
-   NOTIFICATION DROPDOWN
-========================================== */
-
-const notificationBtn =
-document.querySelector(".notification-btn");
-
-const notificationDropdown =
-document.getElementById("notificationDropdown");
-
-notificationBtn?.addEventListener("click",(e)=>{
-
-    e.stopPropagation();
-
-    if(notificationDropdown){
-
-        notificationDropdown.classList.toggle("show");
-
-    }
-
-});
-
-document.addEventListener("click",()=>{
-
-    notificationDropdown?.classList.remove("show");
-
-});
-
-/* ==========================================
-   CARD ANIMATION
-========================================== */
-
-document
-.querySelectorAll(".summary-card")
-.forEach(card=>{
-
-    card.addEventListener("touchstart",()=>{
-
-        card.style.transform="scale(.98)";
-
-    });
-
-    card.addEventListener("touchend",()=>{
-
-        card.style.transform="";
-
-    });
-
-});
-
-/* ==========================================
-   SIDEBAR AUTO CLOSE
-========================================== */
-
-document
-.querySelectorAll("#sidebar a")
-.forEach(link=>{
-
-    link.addEventListener("click",()=>{
-
-        sidebar.classList.remove("active");
-        overlay.classList.remove("active");
-
-    });
-
-});
-
-/* ==========================================
-   CONNECTION STATUS
-========================================== */
-
-window.addEventListener("offline",()=>{
-
-    alert("No internet connection.");
-
-});
-
-window.addEventListener("online",()=>{
-
-    console.log("Internet connection restored.");
-
-});
-
-/* ==========================================
-   FINISHED
-========================================== */
-
-console.log("DigiSphere Dashboard Loaded Successfully");
+console.log("DigiSphere Dashboard Ready");
