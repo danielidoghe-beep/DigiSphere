@@ -9,7 +9,13 @@ import {
 import {
     getFirestore,
     doc,
-    onSnapshot
+    onSnapshot,
+    collection,
+    query,
+    where,
+    orderBy,
+    limit,
+    getDocs
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -397,5 +403,102 @@ themeToggle.addEventListener("click",()=>{
 if(localStorage.getItem("theme")==="dark"){
 
     document.body.classList.add("dark");
+
+}
+// ======================================
+// Recent Orders
+// ======================================
+
+async function loadRecentOrders(user){
+
+    const ordersContainer =
+        document.getElementById("recentOrders");
+
+    if(!ordersContainer) return;
+
+    try{
+
+        const q = query(
+
+            collection(db,"orders"),
+
+            where("userId","==",user.uid),
+
+            orderBy("createdAt","desc"),
+
+            limit(3)
+
+        );
+
+        const snapshot = await getDocs(q);
+
+        if(snapshot.empty){
+
+            ordersContainer.innerHTML = `
+
+                <div class="empty-orders">
+
+                    <i class="fa-regular fa-bag-shopping"></i>
+
+                    <h4>No orders yet</h4>
+
+                    <p>Your purchases will appear here</p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+        let html = "";
+
+        snapshot.forEach(doc=>{
+
+            const order = doc.data();
+
+            html += `
+
+                <div class="order-item">
+
+                    <img
+                        src="${order.image || 'images/default-product.png'}"
+                        class="order-image"
+                    >
+
+                    <div class="order-details">
+
+                        <h4>${order.title || 'Product'}</h4>
+
+                        <small>
+
+                            ₦${Number(order.amount || 0).toLocaleString("en-NG")}
+
+                        </small>
+
+                    </div>
+
+                    <span class="order-status">
+
+                        ${order.status || "Completed"}
+
+                    </span>
+
+                </div>
+
+            `;
+
+        });
+
+        ordersContainer.innerHTML = html;
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+    }
 
 }
