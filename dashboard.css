@@ -1,0 +1,601 @@
+/* =====================================
+   DigiSphere Dashboard
+===================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    background:#ffffff;
+
+    color:#111;
+
+}
+
+.dashboard{
+
+    max-width:600px;
+
+    margin:auto;
+
+    padding:20px 18px 120px;
+
+}
+
+/* ======================
+   TOP BAR
+====================== */
+
+.topbar{
+
+    position:sticky;
+
+    top:0;
+
+    background:#fff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:15px 18px;
+
+    box-shadow:0 1px 8px rgba(0,0,0,.05);
+
+    z-index:999;
+
+}
+
+.top-center{
+
+    flex:1;
+
+    display:flex;
+
+    justify-content:center;
+
+}
+
+.theme-pill{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    border:none;
+
+    background:#f4f4f4;
+
+    padding:10px 18px;
+
+    border-radius:30px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+}
+
+.icon-btn{
+
+    width:46px;
+
+    height:46px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#f7f7f7;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+    position:relative;
+
+}
+
+.badge{
+
+    position:absolute;
+
+    top:-3px;
+
+    right:-3px;
+
+    background:#5d7c1f;
+
+    color:#fff;
+
+    min-width:20px;
+
+    height:20px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:11px;
+
+    font-weight:bold;
+
+}
+
+.avatar{
+
+    width:50px;
+
+    height:50px;
+
+    border-radius:50%;
+
+    background:#5d7c1f;
+
+    color:#fff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-weight:bold;
+
+    overflow:hidden;
+
+    margin-left:12px;
+
+}
+
+.avatar img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+/* ======================
+WELCOME
+====================== */
+
+.welcome{
+
+    margin:30px 0;
+
+}
+
+.welcome h1{
+
+    font-size:34px;
+
+    font-weight:800;
+
+    margin-bottom:10px;
+
+}
+
+.welcome p{
+
+    color:#777;
+
+    font-size:16px;
+
+}
+
+/* ======================
+CARDS
+====================== */
+
+.summary-card{
+
+    background:#fff;
+
+    border:1px solid #ececec;
+
+    border-radius:28px;
+
+    padding:28px;
+
+    margin-bottom:22px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.04);
+
+}
+
+.wallet-card h2{
+
+    color:#5d7c1f;
+
+}
+
+.summary-card small{
+
+    display:block;
+
+    color:#777;
+
+    font-size:15px;
+
+    margin-bottom:12px;
+
+}
+
+.summary-card h2{
+
+    font-size:34px;
+
+    margin-bottom:18px;
+
+}
+
+.summary-card p{
+
+    color:#777;
+
+    margin-top:10px;
+
+}
+
+.card-link{
+
+    background:none;
+
+    border:none;
+
+    color:#5d7c1f;
+
+    cursor:pointer;
+
+    font-weight:700;
+
+    font-size:15px;
+
+}
+
+/* ======================
+SECTION
+====================== */
+
+.section{
+
+    margin-top:40px;
+
+}
+
+.section h3{
+
+    font-size:24px;
+
+    margin-bottom:20px;
+
+}
+
+.section-title{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.section-title a{
+
+    text-decoration:none;
+
+    color:#5d7c1f;
+
+    font-weight:700;
+
+}
+
+/* ======================
+QUICK ACTIONS
+====================== */
+
+.quick-card{
+
+    background:#fff;
+
+    border:1px solid #ececec;
+
+    border-radius:26px;
+
+    padding:22px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    margin-bottom:18px;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.04);
+
+}
+
+.quick-icon{
+
+    width:70px;
+
+    height:70px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:28px;
+
+}
+
+/* ======================
+RECENT ORDERS
+====================== */
+
+.empty-orders{
+
+    border:1px solid #ececec;
+
+    border-radius:28px;
+
+    padding:60px 20px;
+
+    text-align:center;
+
+    background:#fff;
+
+}
+
+.empty-orders i{
+
+    font-size:55px;
+
+    color:#cfcfcf;
+
+    margin-bottom:20px;
+
+}
+
+.empty-orders h4{
+
+    margin-bottom:10px;
+
+}
+
+.empty-orders p{
+
+    color:#777;
+
+}
+
+/* ======================
+COMING SOON
+====================== */
+
+.soon-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:20px 0;
+
+    border-bottom:1px solid #efefef;
+
+}
+
+.soon-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.soon-badge{
+
+    background:#edf7df;
+
+    color:#5d7c1f;
+
+    padding:6px 16px;
+
+    border-radius:20px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+}
+
+/* ======================
+HELP
+====================== */
+
+.help-card{
+
+    margin-top:45px;
+
+    background:#fff;
+
+    border:1px solid #ececec;
+
+    border-radius:28px;
+
+    padding:28px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.04);
+
+}
+
+.help-card h3{
+
+    margin-bottom:15px;
+
+}
+
+.help-card p{
+
+    color:#777;
+
+    margin-bottom:25px;
+
+    line-height:1.7;
+
+}
+
+.primary-btn{
+
+    width:100%;
+
+    height:58px;
+
+    border:none;
+
+    background:#5d7c1f;
+
+    color:#fff;
+
+    border-radius:18px;
+
+    font-size:17px;
+
+    cursor:pointer;
+
+    margin-bottom:14px;
+
+}
+
+.secondary-btn{
+
+    width:100%;
+
+    height:58px;
+
+    border:1px solid #ddd;
+
+    background:#fff;
+
+    border-radius:18px;
+
+    font-size:17px;
+
+    cursor:pointer;
+
+}
+
+.email-row{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-top:22px;
+
+    color:#777;
+
+}
+
+/* ======================
+SIDEBAR
+====================== */
+
+.sidebar{
+
+    position:fixed;
+
+    top:0;
+
+    left:-320px;
+
+    width:300px;
+
+    height:100%;
+
+    background:#fff;
+
+    transition:.3s;
+
+    z-index:2000;
+
+    box-shadow:0 0 25px rgba(0,0,0,.15);
+
+}
+
+.sidebar.active{
+
+    left:0;
+
+}
+
+.overlay{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.35);
+
+    z-index:1500;
+
+}
+
+.overlay.active{
+
+    display:block;
+
+}
+
+/* ======================
+RESPONSIVE
+====================== */
+
+@media(max-width:500px){
+
+    .welcome h1{
+
+        font-size:28px;
+
+    }
+
+    .summary-card h2{
+
+        font-size:30px;
+
+    }
+
+}
