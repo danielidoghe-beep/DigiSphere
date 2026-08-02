@@ -11,30 +11,35 @@ import {
     doc,
     getDoc,
     setDoc,
-    updateDoc,
-    collection,
     addDoc,
-    serverTimestamp,
+    collection,
     query,
     where,
     orderBy,
     limit,
-    onSnapshot
+    onSnapshot,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
-/* ===========================
+/* ======================================
    FIREBASE
-=========================== */
+====================================== */
 
 const firebaseConfig = {
 
-    apiKey: "AIzaSyDnpsEIlXwPLSCJAGMS7feM2JMhmxzCCfs",
-    authDomain: "digisphere-66fdf.firebaseapp.com",
-    projectId: "digisphere-66fdf",
-    storageBucket: "digisphere-66fdf.firebasestorage.app",
-    messagingSenderId: "834194884246",
-    appId: "1:834194884246:web:72672ca253c3d7dd9d24b7",
-    measurementId: "G-19QS4036V7"
+    apiKey: "YOUR_API_KEY",
+
+    authDomain: "YOUR_AUTH_DOMAIN",
+
+    projectId: "YOUR_PROJECT_ID",
+
+    storageBucket: "YOUR_STORAGE_BUCKET",
+
+    messagingSenderId: "YOUR_SENDER_ID",
+
+    appId: "YOUR_APP_ID",
+
+    measurementId: "YOUR_MEASUREMENT_ID"
 
 };
 
@@ -44,11 +49,23 @@ const auth = getAuth(app);
 
 const db = getFirestore(app);
 
-/* ===========================
+/* ======================================
    ELEMENTS
-=========================== */
+====================================== */
 
 const loader = document.getElementById("loader");
+
+const sidebar = document.getElementById("sidebar");
+
+const overlay = document.getElementById("overlay");
+
+const menuBtn = document.getElementById("menuBtn");
+
+const closeSidebar = document.getElementById("closeSidebar");
+
+const logoutBtn = document.getElementById("logoutBtn");
+
+const themeToggle = document.getElementById("themeToggle");
 
 const walletBalance = document.getElementById("walletBalance");
 
@@ -56,65 +73,82 @@ const topWallet = document.getElementById("topWallet");
 
 const userAvatar = document.getElementById("userAvatar");
 
-const menuBtn = document.getElementById("menuBtn");
+const notificationCount = document.getElementById("notificationCount");
 
-const sidebar = document.getElementById("sidebar");
+const bankTransferMethod =
+document.getElementById("bankTransferMethod");
 
-const overlay = document.getElementById("overlay");
+const flutterwaveMethod =
+document.getElementById("flutterwaveMethod");
 
-const closeSidebar = document.getElementById("closeSidebar");
+const flutterwaveNotice =
+document.getElementById("flutterwaveNotice");
 
-const logoutBtn = document.getElementById("logoutBtn");
+const depositAmount =
+document.getElementById("depositAmount");
 
-const bankTransferMethod = document.getElementById("bankTransferMethod");
+const amountError =
+document.getElementById("amountError");
 
-const flutterwaveMethod = document.getElementById("flutterwaveMethod");
+const paymentBtn =
+document.getElementById("openPaymentBtn");
 
-const depositAmount = document.getElementById("depositAmount");
+const paymentLoader =
+document.getElementById("paymentLoader");
 
-const amountError = document.getElementById("amountError");
+const paymentBtnText =
+document.getElementById("paymentBtnText");
 
-const paymentBtn = document.getElementById("openPaymentBtn");
+const paymentModal =
+document.getElementById("paymentModal");
 
-const paymentLoader = document.getElementById("paymentLoader");
+const paymentAmount =
+document.getElementById("paymentAmount");
 
-const paymentBtnText = document.getElementById("paymentBtnText");
+const paymentReference =
+document.getElementById("paymentReference");
 
-const flutterwaveNotice = document.getElementById("flutterwaveNotice");
+const paymentBank =
+document.getElementById("paymentBank");
 
-const paymentModal = document.getElementById("paymentModal");
+const paymentAccount =
+document.getElementById("paymentAccount");
 
-const closePaymentModal = document.getElementById("closePaymentModal");
+const copyAccountBtn =
+document.getElementById("copyAccountBtn");
 
-const cancelPayment = document.getElementById("cancelPayment");
+const cancelPayment =
+document.getElementById("cancelPayment");
 
-const paymentAmount = document.getElementById("paymentAmount");
+const closePaymentModal =
+document.getElementById("closePaymentModal");
 
-const paymentReference = document.getElementById("paymentReference");
-
-const paymentBank = document.getElementById("paymentBank");
-
-const paymentAccount = document.getElementById("paymentAccount");
-
-const whatsappProof = document.getElementById("whatsappProof");
+const whatsappProof =
+document.getElementById("whatsappProof");
 
 const recentTransactions =
 document.getElementById("transactionsContainer");
 
-/* ===========================
+/* ======================================
    VARIABLES
-=========================== */
+====================================== */
 
 let currentUser = null;
 
 let paymentMethod = "Bank Transfer";
 
-let paymentRef = "";
-
 let selectedBank = "PalmPay";
-/* ===========================
+
+let paymentRef = "";
+/* ======================================
    LOADER
-=========================== */
+====================================== */
+
+function showLoader(){
+
+    loader.style.display = "flex";
+
+}
 
 function hideLoader(){
 
@@ -128,9 +162,9 @@ function hideLoader(){
 
 }
 
-/* ===========================
+/* ======================================
    AUTH
-=========================== */
+====================================== */
 
 onAuthStateChanged(auth, async(user)=>{
 
@@ -146,65 +180,130 @@ onAuthStateChanged(auth, async(user)=>{
 
     await loadUser();
 
+    loadNotificationCount();
+
     loadTransactions();
 
     hideLoader();
 
 });
 
-/* ===========================
+/* ======================================
    LOAD USER
-=========================== */
+====================================== */
 
 async function loadUser(){
 
-    const userRef = doc(db,"users",currentUser.uid);
+    try{
 
-    const snap = await getDoc(userRef);
+        const userRef = doc(db,"users",currentUser.uid);
 
-    if(!snap.exists()) return;
+        const snap = await getDoc(userRef);
 
-    const data = snap.data();
+        if(!snap.exists()) return;
 
-    const balance = Number(data.wallet || 0);
+        const data = snap.data();
 
-    walletBalance.textContent =
+        const balance = Number(data.wallet || 0);
+
+        walletBalance.textContent =
         "₦" + balance.toLocaleString("en-NG");
 
-    topWallet.textContent =
+        topWallet.textContent =
         balance.toLocaleString("en-NG");
 
-    if(data.photo){
+        if(data.photo){
 
-        userAvatar.innerHTML = `
-        <img src="${data.photo}"
-        style="
-        width:100%;
-        height:100%;
-        border-radius:50%;
-        object-fit:cover;
-        ">
-        `;
+            userAvatar.innerHTML = `
 
-    }else{
+                <img
+                src="${data.photo}"
+                style="
+                width:100%;
+                height:100%;
+                object-fit:cover;
+                border-radius:50%;
+                ">
 
-        const initials =
-        (data.name || currentUser.email)
-        .split(" ")
-        .map(n=>n[0])
-        .join("")
-        .substring(0,2)
-        .toUpperCase();
+            `;
 
-        userAvatar.textContent = initials;
+        }else{
+
+            const fullName =
+
+            data.name ||
+
+            currentUser.displayName ||
+
+            currentUser.email;
+
+            const initials =
+
+            fullName
+
+            .split(" ")
+
+            .map(name=>name.charAt(0))
+
+            .join("")
+
+            .substring(0,2)
+
+            .toUpperCase();
+
+            userAvatar.textContent = initials;
+
+        }
+
+    }
+
+    catch(error){
+
+        console.error(error);
 
     }
 
 }
 
-/* ===========================
+/* ======================================
+   NOTIFICATIONS
+====================================== */
+
+function loadNotificationCount(){
+
+    const userRef =
+
+    doc(db,"users",currentUser.uid);
+
+    onSnapshot(userRef,(snap)=>{
+
+        if(!snap.exists()) return;
+
+        const data = snap.data();
+
+        const unread =
+
+        Number(data.unreadNotifications || 0);
+
+        if(unread>0){
+
+            notificationCount.style.display="flex";
+
+            notificationCount.textContent=unread;
+
+        }else{
+
+            notificationCount.style.display="none";
+
+        }
+
+    });
+
+}
+
+/* ======================================
    SIDEBAR
-=========================== */
+====================================== */
 
 menuBtn.onclick=()=>{
 
@@ -226,24 +325,41 @@ closeSidebar.onclick=closeMenu;
 
 overlay.onclick=closeMenu;
 
-/* ===========================
+/* ======================================
    LOGOUT
-=========================== */
+====================================== */
 
 logoutBtn.onclick=async()=>{
 
-    if(!confirm("Sign out?")) return;
+    if(!confirm("Sign out of DigiSphere?")){
 
-    await signOut(auth);
+        return;
+
+    }
+
+    showLoader();
+
+    try{
+
+        await signOut(auth);
+
+    }
+
+    catch(error){
+
+        hideLoader();
+
+        alert("Unable to sign out.");
+
+        console.error(error);
+
+    }
 
 };
 
-/* ===========================
+/* ======================================
    THEME
-=========================== */
-
-const themeToggle =
-document.getElementById("themeToggle");
+====================================== */
 
 if(localStorage.getItem("theme")==="dark"){
 
@@ -260,15 +376,17 @@ themeToggle.onclick=()=>{
         "theme",
 
         document.body.classList.contains("dark")
+
         ? "dark"
+
         : "light"
 
     );
 
 };
-/* ===========================
+/* ======================================
    PAYMENT METHOD
-=========================== */
+====================================== */
 
 bankTransferMethod.onclick = () => {
 
@@ -284,7 +402,7 @@ bankTransferMethod.onclick = () => {
 
 flutterwaveMethod.onclick = () => {
 
-    paymentMethod = "Flutterwave";
+    paymentMethod = "Card";
 
     flutterwaveMethod.classList.add("active");
 
@@ -294,31 +412,57 @@ flutterwaveMethod.onclick = () => {
 
 };
 
-/* ===========================
-   QUICK AMOUNT
-=========================== */
+/* ======================================
+   QUICK AMOUNT BUTTONS
+====================================== */
 
 document.querySelectorAll(".quickAmount").forEach(button=>{
 
-    button.onclick=()=>{
+    button.onclick = ()=>{
 
-        depositAmount.value=button.textContent;
+        const amount =
 
-        amountError.style.display="none";
+        button.textContent.replace(/[₦,]/g,"");
+
+        depositAmount.value = amount;
+
+        amountError.style.display = "none";
+
+        document
+        .querySelectorAll(".quickAmount")
+        .forEach(btn=>btn.classList.remove("active"));
+
+        button.classList.add("active");
 
     };
 
 });
 
-/* ===========================
+/* ======================================
+   AMOUNT VALIDATION
+====================================== */
+
+depositAmount.addEventListener("input",()=>{
+
+    const amount = Number(depositAmount.value);
+
+    if(amount >= 1000){
+
+        amountError.style.display = "none";
+
+    }
+
+});
+
+/* ======================================
    OPEN PAYMENT
-=========================== */
+====================================== */
 
-paymentBtn.onclick = async () => {
+paymentBtn.onclick = async()=>{
 
-    if(paymentMethod==="Flutterwave"){
+    if(paymentMethod !== "Bank Transfer"){
 
-        flutterwaveNotice.style.display="block";
+        flutterwaveNotice.style.display = "block";
 
         return;
 
@@ -328,13 +472,13 @@ paymentBtn.onclick = async () => {
 
     if(amount < 1000){
 
-        amountError.style.display="flex";
+        amountError.style.display = "flex";
 
         return;
 
     }
 
-    amountError.style.display="none";
+    amountError.style.display = "none";
 
     paymentBtn.disabled = true;
 
@@ -344,72 +488,83 @@ paymentBtn.onclick = async () => {
 
     await new Promise(resolve=>setTimeout(resolve,1500));
 
-    paymentBtn.disabled = false;
-
     paymentLoader.style.display = "none";
 
     paymentBtnText.style.display = "block";
 
+    paymentBtn.disabled = false;
+
     /* Random Bank */
 
-    const banks=[
+    const banks = [
 
         {
+
             bank:"PalmPay",
+
             account:"9117412352"
+
         },
 
         {
+
             bank:"OPay",
+
             account:"9117412352"
+
         }
 
     ];
 
-    const randomBank=
+    const randomBank =
 
     banks[Math.floor(Math.random()*banks.length)];
 
-    selectedBank=randomBank.bank;
+    selectedBank = randomBank.bank;
 
-    paymentRef="DS"+Date.now();
+    paymentRef =
 
-    paymentAmount.textContent=
+    "DS" + Date.now();
 
-    "₦"+amount.toLocaleString("en-NG");
+    paymentAmount.textContent =
 
-    paymentReference.textContent=
+    "₦" +
+
+    amount.toLocaleString("en-NG");
+
+    paymentReference.textContent =
 
     paymentRef;
 
-    paymentBank.textContent=
+    paymentBank.textContent =
 
     randomBank.bank;
 
-    paymentAccount.textContent=
+    paymentAccount.textContent =
 
     randomBank.account;
 
     paymentModal.classList.add("show");
 
 };
-/* ===========================
-   PAYMENT MODAL
-=========================== */
 
-closePaymentModal.onclick = () => {
+/* ======================================
+   CLOSE PAYMENT
+====================================== */
 
-    paymentModal.classList.remove("show");
-
-};
-
-cancelPayment.onclick = () => {
+closePaymentModal.onclick = ()=>{
 
     paymentModal.classList.remove("show");
 
 };
 
-window.onclick = (e) => {
+cancelPayment.onclick = ()=>{
+
+    paymentModal.classList.remove("show");
+
+};
+
+window.addEventListener("click",(e)=>{
 
     if(e.target === paymentModal){
 
@@ -417,45 +572,78 @@ window.onclick = (e) => {
 
     }
 
-};
+});
+/* ======================================
+   COPY ACCOUNT NUMBER
+====================================== */
 
-/* ===========================
-   SAVE TRANSACTION
-=========================== */
-
-whatsappProof.onclick = async () => {
-
-    const amount = Number(depositAmount.value);
+copyAccountBtn.onclick = async()=>{
 
     try{
 
-        const transaction = {
+        await navigator.clipboard.writeText(
 
-            userId: currentUser.uid,
+            paymentAccount.textContent
 
-            amount: amount,
+        );
 
-            method: selectedBank,
+        copyAccountBtn.innerHTML =
 
-            accountName: "Ogaga Blessing Idoghe",
+        `<i class="fa-solid fa-check"></i> Copied`;
 
-            accountNumber: "9117412352",
+        setTimeout(()=>{
 
-            reference: paymentRef,
+            copyAccountBtn.innerHTML =
 
-            status: "Pending",
+            `<i class="fa-regular fa-copy"></i> Copy Account Number`;
 
-            type: "Wallet Funding",
+        },2000);
 
-            createdAt: serverTimestamp()
+    }
 
-        };
+    catch(error){
+
+        alert("Unable to copy account number.");
+
+    }
+
+};
+
+/* ======================================
+   SAVE TRANSACTION
+====================================== */
+
+whatsappProof.onclick = async()=>{
+
+    try{
+
+        const amount = Number(depositAmount.value);
 
         await addDoc(
 
             collection(db,"transactions"),
 
-            transaction
+            {
+
+                userId: currentUser.uid,
+
+                type: "Wallet Funding",
+
+                amount: amount,
+
+                bank: selectedBank,
+
+                accountName: "Ogaga Blessing Idoghe",
+
+                accountNumber: "9117412352",
+
+                reference: paymentRef,
+
+                status: "Pending",
+
+                createdAt: serverTimestamp()
+
+            }
 
         );
 
@@ -471,7 +659,7 @@ Amount: ₦${amount.toLocaleString("en-NG")}
 
 Bank: ${selectedBank}
 
-Kindly confirm my payment.
+Please confirm my payment.
 
 Thank you.`;
 
@@ -489,6 +677,10 @@ Thank you.`;
 
         depositAmount.value = "";
 
+        document
+        .querySelectorAll(".quickAmount")
+        .forEach(btn=>btn.classList.remove("active"));
+
     }
 
     catch(error){
@@ -501,9 +693,9 @@ Thank you.`;
 
 };
 
-/* ===========================
+/* ======================================
    LOAD TRANSACTIONS
-=========================== */
+====================================== */
 
 function loadTransactions(){
 
@@ -515,7 +707,7 @@ function loadTransactions(){
 
         orderBy("createdAt","desc"),
 
-        limit(10)
+        limit(20)
 
     );
 
@@ -523,13 +715,31 @@ function loadTransactions(){
 
         if(snapshot.empty){
 
+            recentTransactions.innerHTML = `
+
+                <div class="empty-transactions">
+
+                    <div class="empty-icon">
+
+                        <i class="fa-solid fa-wallet"></i>
+
+                    </div>
+
+                    <h3>No transactions yet</h3>
+
+                    <p>Your wallet funding history will appear here.</p>
+
+                </div>
+
+            `;
+
             return;
 
         }
 
         recentTransactions.innerHTML = "";
 
-        snapshot.forEach((docItem)=>{
+        snapshot.forEach(docItem=>{
 
             const t = docItem.data();
 
