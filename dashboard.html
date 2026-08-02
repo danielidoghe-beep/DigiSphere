@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard | DigiSphere</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="stylesheet" href="dashboard.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+</head>
+
+<body>
+
+<!-- Loading Screen -->
+
+<div id="loader">
+
+    <div class="loader-logo">
+
+        <i class="fa-solid fa-layer-group"></i>
+
+    </div>
+
+</div>
+
+<!-- Top Navigation -->
+
+<header class="topbar">
+
+    <button id="menuBtn" class="icon-btn">
+
+        <i class="fa-solid fa-bars"></i>
+
+    </button>
+
+    <div class="top-center">
+
+        <button id="themeToggle" class="theme-pill">
+
+            <i class="fa-regular fa-sun"></i>
+
+            <span>Light</span>
+
+        </button>
+
+    </div>
+
+    <div class="top-right">
+
+        <button id="notificationBtn" class="icon-btn notification-btn">
+
+            <i class="fa-regular fa-bell"></i>
+
+            <span id="notificationCount" class="badge">0</span>
+
+        </button>
+
+        <div id="userAvatar" class="avatar">
+
+            <img id="profileImage" hidden>
+
+            <span id="avatarLetters">DS</span>
+
+        </div>
+
+    </div>
+
+</header>
+
+<!-- Sidebar -->
+
+<aside id="sidebar" class="sidebar">
+
+    <div class="sidebar-header">
+
+        <h2>DigiSphere</h2>
+
+        <button id="closeSidebar">
+
+            <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
+    </div>
+
+    <nav>
+
+        <a href="dashboard.html">
+
+            <i class="fa-solid fa-house"></i>
+
+            Dashboard
+
+        </a>
+
+        <a href="wallet.html">
+
+            <i class="fa-solid fa-wallet"></i>
+
+            Wallet
+
+        </a>
+
+        <a href="orders.html">
+
+            <i class="fa-solid fa-bag-shopping"></i>
+
+            Orders
+
+        </a>
+
+        <a href="inventory.html">
+
+            <i class="fa-solid fa-box"></i>
+
+            Inventory
+
+        </a>
+
+        <a href="notifications.html">
+
+            <i class="fa-regular fa-bell"></i>
+
+            Notifications
+
+        </a>
+
+        <a href="profile.html">
+
+            <i class="fa-regular fa-user"></i>
+
+            Profile
+
+        </a>
+
+        <a href="settings.html">
+
+            <i class="fa-solid fa-gear"></i>
+
+            Settings
+
+        </a>
+
+        <a href="#" id="logoutBtn">
+
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            Logout
+
+        </a>
+
+    </nav>
+
+</aside>
+
+<div id="overlay" class="overlay"></div>
+
+<!-- Main Content -->
+
+<main class="dashboard">
+
+    <!-- Welcome -->
+
+    <section class="welcome">
+
+        <h1>
+
+            Welcome,
+
+            <span id="userName">
+
+                Loading...
+
+            </span>
+
+        </h1>
+
+        <p>
+
+            Nice to see you again.
+
+        </p>
+
+    </section>
+
+    <!-- Wallet -->
+
+    <section class="summary-card wallet-card">
+
+        <small>Wallet Balance</small>
+
+        <h2 id="walletBalance">
+
+            ₦0
+
+        </h2>
+
+        <button id="addFundsBtn" class="card-link">
+
+            Add Funds
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </button>
+
+    </section>
+
+    <!-- Purchases -->
+
+    <section class="summary-card">
+
+        <small>Total Purchases</small>
+
+        <h2 id="purchaseCount">
+
+            0
+
+        </h2>
+
+        <button id="viewOrdersBtn" class="card-link">
+
+            View Orders
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </button>
+
+    </section>
+
+    <!-- Inventory -->
+
+    <section class="summary-card">
+
+        <small>Inventory</small>
+
+        <h2 id="inventoryCount">
+
+            0
+
+        </h2>
+
+        <p id="inventoryInfo">
+
+            0 Active • 0 Expired
+
+        </p>
+
+    </section>
+
+    <!-- Quick Actions -->
+
+    <section class="section">
+
+        <h3>
+
+            Quick Actions
+
+        </h3>
+
+        <div id="quickActions">
+
+            <!-- Firebase or JS -->
+
+        </div>
+
+    </section>
+
+    <!-- Recent Orders -->
+
+    <section class="section">
+
+        <div class="section-title">
+
+            <h3>
+
+                Recent Orders
+
+            </h3>
+
+            <a href="orders.html">
+
+                View All
+
+            </a>
+
+        </div>
+
+        <div id="recentOrders">
+
+        </div>
+
+    </section>
+
+    <!-- Coming Soon -->
+
+    <section class="section">
+
+        <h3>
+
+            Coming Soon
+
+        </h3>
+
+        <div id="comingSoon">
+
+        </div>
+
+    </section>
+
+    <!-- Help -->
+
+    <section class="help-card">
+
+        <h3>
+
+            Need Help?
+
+        </h3>
+
+        <p>
+
+            Contact DigiSphere support if you need any assistance.
+
+        </p>
+
+        <button id="supportBtn" class="primary-btn">
+
+            <i class="fa-brands fa-whatsapp"></i>
+
+            Contact Support
+
+        </button>
+
+        <button id="emailBtn" class="secondary-btn">
+
+            <i class="fa-regular fa-envelope"></i>
+
+            Email Support
+
+        </button>
+
+        <div class="email-row">
+
+            <i class="fa-regular fa-envelope"></i>
+
+            <span>
+
+                support@digisphere.com
+
+            </span>
+
+        </div>
+
+    </section>
+
+</main>
+
+<script type="module" src="dashboard.js"></script>
+
+</body>
+
+</html>
