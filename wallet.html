@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Wallet | DigiSphere</title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="wallet.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+</head>
+
+<body>
+
+<!-- Loader -->
+
+<div id="loader">
+    <div class="loader-spinner"></div>
+</div>
+
+<!-- Overlay -->
+
+<div id="overlay"></div>
+
+<!-- Sidebar -->
+
+<aside id="sidebar">
+
+<div class="sidebar-header">
+
+<div class="logo">
+<i class="fa-solid fa-layer-group"></i>
+<span>DigiSphere</span>
+</div>
+
+<button id="closeSidebar">
+<i class="fa-solid fa-xmark"></i>
+</button>
+
+</div>
+
+<nav>
+
+<a href="dashboard.html">
+<i class="fa-solid fa-table-columns"></i>
+Dashboard
+</a>
+
+<a href="wallet.html" class="active">
+<i class="fa-solid fa-wallet"></i>
+Wallet
+</a>
+
+<a href="orders.html">
+<i class="fa-solid fa-bag-shopping"></i>
+Orders
+</a>
+
+<a href="transactions.html">
+<i class="fa-solid fa-arrow-right-arrow-left"></i>
+Transactions
+</a>
+
+<a href="logs-store.html">
+<i class="fa-solid fa-cube"></i>
+Logs Store
+</a>
+
+<a href="tools-store.html">
+<i class="fa-solid fa-screwdriver-wrench"></i>
+Tools Store
+</a>
+
+<a href="support.html">
+<i class="fa-solid fa-headset"></i>
+Support
+</a>
+
+<a href="profile.html">
+<i class="fa-regular fa-user"></i>
+Profile
+</a>
+
+</nav>
+
+<div class="sidebar-footer">
+
+<button id="logoutBtn">
+
+<i class="fa-solid fa-right-from-bracket"></i>
+
+Sign out
+
+</button>
+
+</div>
+
+</aside>
+
+<!-- Main -->
+
+<div class="wallet-page">
+
+<!-- Topbar -->
+
+<header class="topbar">
+
+<button id="menuBtn" class="icon-btn">
+
+<i class="fa-regular fa-window-maximize"></i>
+
+</button>
+
+<div class="top-actions">
+
+<div class="wallet-pill">
+
+₦<span id="topWallet">0</span>
+
+</div>
+
+<button id="themeToggle" class="icon-btn">
+
+<i class="fa-regular fa-sun"></i>
+
+</button>
+
+<button class="icon-btn">
+
+<i class="fa-regular fa-bell"></i>
+
+</button>
+
+<div id="userAvatar" class="avatar">
+
+DS
+
+</div>
+
+</div>
+
+</header>
+
+<!-- Page Title -->
+
+<section class="wallet-header">
+
+<h1>Wallet</h1>
+
+<p>Manage your balance and transactions</p>
+
+</section>
+
+<!-- Wallet Balance -->
+
+<section class="balance-card">
+
+<p>Available balance</p>
+
+<h2 id="walletBalance">₦0</h2>
+
+<span>
+
+Funds never expire · Used instantly on all purchases
+
+</span>
+
+</section>
+<!-- ===========================
+Top Up Wallet
+=========================== -->
+
+<section class="wallet-section">
+
+<div class="section-title">
+
+<h2>Top Up Wallet</h2>
+
+<p>Choose a payment method</p>
+
+</div>
+
+<!-- Payment Methods -->
+
+<div class="payment-methods">
+
+<!-- Bank Transfer -->
+
+<div
+class="payment-method active"
+id="bankTransferMethod">
+
+<div class="recommended-badge">
+
+Recommended
+
+</div>
+
+<div class="payment-icon">
+
+<i class="fa-solid fa-building-columns"></i>
+
+</div>
+
+<div class="payment-info">
+
+<h3>Bank Transfer</h3>
+
+<p>Instant manual verification</p>
+
+</div>
+
+<div class="payment-check">
+
+<i class="fa-solid fa-circle-check"></i>
+
+</div>
+
+</div>
+
+<!-- Flutterwave -->
+
+<div
+class="payment-method"
+id="flutterwaveMethod">
+
+<div class="payment-icon">
+
+<i class="fa-solid fa-credit-card"></i>
+
+</div>
+
+<div class="payment-info">
+
+<h3>Flutterwave</h3>
+
+<p>Coming soon</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Amount -->
+
+<div class="amount-box">
+
+<label>
+
+Amount
+
+</label>
+
+<div class="amount-input">
+
+<span>₦</span>
+
+<input
+type="number"
+id="depositAmount"
+placeholder="Enter amount"
+min="1000">
+
+</div>
+
+<!-- Error -->
+
+<div
+id="amountError"
+class="amount-error">
+
+<i class="fa-solid fa-circle-exclamation"></i>
+
+Minimum top-up amount is ₦1,000
+
+</div>
+
+</div>
+
+<!-- Quick Amount -->
+
+<div class="quick-amounts">
+
+<button class="quickAmount">
+
+1000
+
+</button>
+
+<button class="quickAmount">
+
+5000
+
+</button>
+
+<button class="quickAmount">
+
+10000
+
+</button>
+
+<button class="quickAmount">
+
+20000
+
+</button>
+
+</div>
+
+<!-- Open Payment -->
+
+<button
+id="openPaymentBtn"
+class="payment-btn">
+
+<span id="paymentBtnText">
+
+Open Payment
+
+</span>
+
+<div
+id="paymentLoader"
+class="btn-loader">
+
+</div>
+
+</button>
+
+<!-- Flutterwave Notice -->
+
+<div
+id="flutterwaveNotice"
+class="coming-soon-box">
+
+<i class="fa-solid fa-clock"></i>
+
+Flutterwave integration is coming soon.
+
+</div>
+
+</section>
+<!-- ===========================
+Recent Transactions
+=========================== -->
+
+<section class="wallet-section">
+
+<div class="section-header">
+
+<h2>Recent Transactions</h2>
+
+<a href="transactions.html">
+
+View all
+
+</a>
+
+</div>
+
+<div
+id="transactionsContainer"
+class="transactions-list">
+
+<!-- Empty State -->
+
+<div
+id="emptyTransactions"
+class="empty-transactions">
+
+<div class="empty-icon">
+
+<i class="fa-solid fa-wallet"></i>
+
+</div>
+
+<h3>
+
+No transactions yet
+
+</h3>
+
+<p>
+
+Your wallet funding history will appear here after your first payment.
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ===========================
+Need Help
+=========================== -->
+
+<section class="wallet-section">
+
+<div class="help-card">
+
+<div class="help-top">
+
+<div class="help-icon">
+
+<i class="fa-solid fa-headset"></i>
+
+</div>
+
+<div>
+
+<h3>
+
+Need Help?
+
+</h3>
+
+<p>
+
+Having issues funding your wallet?
+
+</p>
+
+</div>
+
+</div>
+
+<a
+href="https://wa.me/2349117412352"
+target="_blank"
+class="help-btn">
+
+<i class="fa-brands fa-whatsapp"></i>
+
+Chat on WhatsApp
+
+</a>
+
+</div>
+
+</section>
+
+<!-- ===========================
+Payment Popup
+=========================== -->
+
+<div
+id="paymentModal"
+class="payment-modal">
+
+<div class="payment-card">
+
+<div class="payment-header">
+
+<h2>
+
+Complete Payment
+
+</h2>
+
+<button
+id="closePaymentModal">
+
+<i class="fa-solid fa-xmark"></i>
+
+</button>
+
+</div>
+
+<div class="payment-body">
+
+<div class="payment-row">
+
+<span>
+
+Amount
+
+</span>
+
+<strong id="paymentAmount">
+
+₦0
+
+</strong>
+
+</div>
+
+<div class="payment-row">
+
+<span>
+
+Reference
+
+</span>
+
+<strong id="paymentReference">
+
+DS000000
+
+</strong>
+
+</div>
+
+<div class="payment-row">
+
+<span>
+
+Bank
+
+</span>
+
+<strong id="paymentBank">
+
+PalmPay
+
+</strong>
+
+</div>
+
+<div class="payment-row">
+
+<span>
+
+Account Name
+
+</span>
+
+<strong>
+
+Ogaga Blessing Idoghe
+
+</strong>
+
+</div>
+
+<div class="payment-row">
+
+<span>
+
+Account Number
+
+</span>
+
+<strong id="paymentAccount">
+
+9117412352
+
+</strong>
+
+</div>
+
+<div class="payment-guide">
+
+<h3>
+
+How to Deposit
+
+</h3>
+
+<div class="guide-item">
+
+<span>1</span>
+
+<p>
+
+Transfer the exact amount to the account above.
+
+</p>
+
+</div>
+
+<div class="guide-item">
+
+<span>2</span>
+
+<p>
+
+Use your payment reference when sending payment.
+
+</p>
+
+</div>
+
+<div class="guide-item">
+
+<span>3</span>
+
+<p>
+
+After payment, tap the WhatsApp button below and send your payment proof.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="payment-buttons">
+
+<button
+id="cancelPayment"
+class="cancel-btn">
+
+Cancel
+
+</button>
+
+<button
+id="whatsappProof"
+class="whatsapp-btn">
+
+<i class="fa-brands fa-whatsapp"></i>
+
+Send Proof to WhatsApp
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="theme.js"></script>
+
+<script type="module" src="wallet.js"></script>
+
+</body>
+
+</html>
