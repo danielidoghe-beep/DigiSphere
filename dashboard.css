@@ -1150,3 +1150,30 @@ body.dark a{
 color:#b7c0cb;
 
 }
+#sidebar{
+    position:fixed;
+    left:-320px;
+    top:0;
+    width:320px;
+    height:100vh;
+    background:#fff;
+    display:flex;
+    flex-direction:column;
+}
+
+.sidebar-content{
+    flex:1;
+    overflow-y:auto;
+}
+
+.sidebar-footer{
+    position:sticky;
+    bottom:0;
+    background:#fff;
+    padding:20px;
+    border-top:1px solid #ececec;
+}
+
+#logoutBtn{
+    width:100%;
+}
