@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Wallet | DigiSphere</title>
 
@@ -17,616 +20,732 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <body>
 
-<!-- Loader -->
+<!-- ===========================
+LOADER
+=========================== -->
 
 <div id="loader">
+
     <div class="loader-spinner"></div>
+
 </div>
 
-<!-- Overlay -->
+<!-- ===========================
+OVERLAY
+=========================== -->
 
 <div id="overlay"></div>
 
-<!-- Sidebar -->
+<!-- ===========================
+SIDEBAR
+=========================== -->
 
 <aside id="sidebar">
 
-<div class="sidebar-header">
+    <div class="sidebar-header">
 
-<div class="logo">
-<i class="fa-solid fa-layer-group"></i>
-<span>DigiSphere</span>
-</div>
+        <div class="logo">
 
-<button id="closeSidebar">
-<i class="fa-solid fa-xmark"></i>
-</button>
+            <i class="fa-solid fa-layer-group"></i>
 
-</div>
+            <span>DigiSphere</span>
 
-<nav>
+        </div>
 
-<a href="dashboard.html">
-<i class="fa-solid fa-table-columns"></i>
-Dashboard
-</a>
+        <button id="closeSidebar">
 
-<a href="wallet.html" class="active">
-<i class="fa-solid fa-wallet"></i>
-Wallet
-</a>
+            <i class="fa-solid fa-xmark"></i>
 
-<a href="orders.html">
-<i class="fa-solid fa-bag-shopping"></i>
-Orders
-</a>
+        </button>
 
-<a href="transactions.html">
-<i class="fa-solid fa-arrow-right-arrow-left"></i>
-Transactions
-</a>
+    </div>
 
-<a href="logs-store.html">
-<i class="fa-solid fa-cube"></i>
-Logs Store
-</a>
+    <nav>
 
-<a href="tools-store.html">
-<i class="fa-solid fa-screwdriver-wrench"></i>
-Tools Store
-</a>
+        <a href="dashboard.html">
 
-<a href="support.html">
-<i class="fa-solid fa-headset"></i>
-Support
-</a>
+            <i class="fa-solid fa-table-columns"></i>
 
-<a href="profile.html">
-<i class="fa-regular fa-user"></i>
-Profile
-</a>
+            Dashboard
 
-</nav>
+        </a>
 
-<div class="sidebar-footer">
+        <a href="wallet.html" class="active">
 
-<button id="logoutBtn">
+            <i class="fa-solid fa-wallet"></i>
 
-<i class="fa-solid fa-right-from-bracket"></i>
+            Wallet
 
-Sign out
+        </a>
 
-</button>
+        <a href="orders.html">
 
-</div>
+            <i class="fa-solid fa-bag-shopping"></i>
+
+            Orders
+
+        </a>
+
+        <a href="transactions.html">
+
+            <i class="fa-solid fa-arrow-right-arrow-left"></i>
+
+            Transactions
+
+        </a>
+
+        <a href="logs-store.html">
+
+            <i class="fa-solid fa-cube"></i>
+
+            Logs Store
+
+        </a>
+
+        <a href="tools-store.html">
+
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+
+            Tools Store
+
+        </a>
+
+        <a href="notifications.html">
+
+            <i class="fa-regular fa-bell"></i>
+
+            Notifications
+
+        </a>
+
+        <a href="profile.html">
+
+            <i class="fa-regular fa-user"></i>
+
+            Profile
+
+        </a>
+
+        <a href="support.html">
+
+            <i class="fa-solid fa-headset"></i>
+
+            Support
+
+        </a>
+
+    </nav>
+
+    <div class="sidebar-footer">
+
+        <button id="logoutBtn">
+
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            Sign Out
+
+        </button>
+
+    </div>
 
 </aside>
 
-<!-- Main -->
+<!-- ===========================
+MAIN PAGE
+=========================== -->
 
 <div class="wallet-page">
 
-<!-- Topbar -->
+<!-- ===========================
+TOP BAR
+=========================== -->
 
 <header class="topbar">
 
-<button id="menuBtn" class="icon-btn">
+    <button
+    id="menuBtn"
+    class="icon-btn">
 
-<i class="fa-regular fa-window-maximize"></i>
+        <i class="fa-solid fa-bars"></i>
 
-</button>
+    </button>
 
-<div class="top-actions">
+    <div class="top-actions">
 
-<div class="wallet-pill">
+        <button
+        class="wallet-pill">
 
-₦<span id="topWallet">0</span>
+            ₦
 
-</div>
+            <span id="topWallet">
 
-<button id="themeToggle" class="icon-btn">
+                0
 
-<i class="fa-regular fa-sun"></i>
+            </span>
 
-</button>
+        </button>
 
-<button class="icon-btn">
+        <button
+        id="themeToggle"
+        class="icon-btn">
 
-<i class="fa-regular fa-bell"></i>
+            <i class="fa-regular fa-moon"></i>
 
-</button>
+        </button>
 
-<div id="userAvatar" class="avatar">
+        <div class="notification-wrapper">
 
-DS
+            <button
+            id="notificationBtn"
+            class="icon-btn">
 
-</div>
+                <i class="fa-regular fa-bell"></i>
 
-</div>
+                <span
+                id="notificationCount"
+                class="notification-badge">
+
+                    0
+
+                </span>
+
+            </button>
+
+        </div>
+
+        <div
+        id="userAvatar"
+        class="avatar">
+
+            DS
+
+        </div>
+
+    </div>
 
 </header>
 
-<!-- Page Title -->
+<!-- ===========================
+PAGE TITLE
+=========================== -->
 
 <section class="wallet-header">
 
-<h1>Wallet</h1>
+    <h1>
 
-<p>Manage your balance and transactions</p>
+        Wallet
+
+    </h1>
+
+    <p>
+
+        Manage your balance and transactions.
+
+    </p>
 
 </section>
 
-<!-- Wallet Balance -->
+<!-- ===========================
+BALANCE CARD
+=========================== -->
 
 <section class="balance-card">
 
-<p>Available balance</p>
+    <small>
 
-<h2 id="walletBalance">₦0</h2>
+        Available Balance
 
-<span>
+    </small>
 
-Funds never expire · Used instantly on all purchases
+    <h2
+    id="walletBalance">
 
-</span>
+        ₦0
+
+    </h2>
+
+    <p>
+
+        Funds never expire · Used instantly on all purchases
+
+    </p>
 
 </section>
 <!-- ===========================
-Top Up Wallet
+TOP UP WALLET
 =========================== -->
 
-<section class="wallet-section">
+<section class="topup-card">
 
-<div class="section-title">
+    <div class="section-title">
 
-<h2>Top Up Wallet</h2>
+        <h2>Top Up Wallet</h2>
 
-<p>Choose a payment method</p>
+        <p>
+            Fund your wallet securely using bank transfer.
+        </p>
 
-</div>
+    </div>
 
-<!-- Payment Methods -->
+    <!-- Payment Methods -->
 
-<div class="payment-methods">
+    <div class="payment-methods">
 
-<!-- Bank Transfer -->
+        <!-- Bank Transfer -->
 
-<div
-class="payment-method active"
-id="bankTransferMethod">
+        <div
+        id="bankTransferMethod"
+        class="payment-method active">
 
-<div class="recommended-badge">
+            <span class="recommended-badge">
 
-Recommended
+                Recommended
 
-</div>
+            </span>
 
-<div class="payment-icon">
+            <div class="payment-icon">
 
-<i class="fa-solid fa-building-columns"></i>
+                <i class="fa-solid fa-building-columns"></i>
 
-</div>
+            </div>
 
-<div class="payment-info">
+            <div class="payment-info">
 
-<h3>Bank Transfer</h3>
+                <h3>
 
-<p>Instant manual verification</p>
+                    Bank Transfer
 
-</div>
+                </h3>
 
-<div class="payment-check">
+                <p>
 
-<i class="fa-solid fa-circle-check"></i>
+                    Instant wallet funding
 
-</div>
+                </p>
 
-</div>
+            </div>
 
-<!-- Flutterwave -->
+            <i class="fa-solid fa-circle-check payment-check"></i>
 
-<div
-class="payment-method"
-id="flutterwaveMethod">
+        </div>
 
-<div class="payment-icon">
+        <!-- Card Payment -->
 
-<i class="fa-solid fa-credit-card"></i>
+        <div
+        id="flutterwaveMethod"
+        class="payment-method">
 
-</div>
+            <div class="payment-icon">
 
-<div class="payment-info">
+                <i class="fa-regular fa-credit-card"></i>
 
-<h3>Flutterwave</h3>
+            </div>
 
-<p>Coming soon</p>
+            <div class="payment-info">
 
-</div>
+                <h3>
 
-</div>
+                    Card Payment
 
-</div>
+                </h3>
 
-<!-- Amount -->
+                <p>
 
-<div class="amount-box">
+                    Coming Soon
 
-<label>
+                </p>
 
-Amount
+            </div>
 
-</label>
+        </div>
 
-<div class="amount-input">
+    </div>
 
-<span>₦</span>
+    <!-- Flutterwave Notice -->
 
-<input
-type="number"
-id="depositAmount"
-placeholder="Enter amount"
-min="1000">
+    <div
+    id="flutterwaveNotice"
+    class="coming-soon-box">
 
-</div>
+        <i class="fa-solid fa-clock"></i>
 
-<!-- Error -->
+        Card payment will be available soon.
 
-<div
-id="amountError"
-class="amount-error">
+    </div>
 
-<i class="fa-solid fa-circle-exclamation"></i>
+    <!-- Amount -->
 
-Minimum top-up amount is ₦1,000
+    <div class="amount-box">
 
-</div>
+        <label>
 
-</div>
+            Enter Amount
 
-<!-- Quick Amount -->
+        </label>
 
-<div class="quick-amounts">
+        <div class="amount-input">
 
-<button class="quickAmount">
+            <span>₦</span>
 
-1000
+            <input
+            type="number"
+            id="depositAmount"
+            placeholder="0">
 
-</button>
+        </div>
 
-<button class="quickAmount">
+        <small>
 
-5000
+            Minimum funding amount is ₦1,000
 
-</button>
+        </small>
 
-<button class="quickAmount">
+    </div>
 
-10000
+    <!-- Error Message -->
 
-</button>
+    <div
+    id="amountError"
+    class="amount-error">
 
-<button class="quickAmount">
+        <i class="fa-solid fa-circle-exclamation"></i>
 
-20000
+        <span>
 
-</button>
+            Minimum top-up amount is ₦1,000.
 
-</div>
+        </span>
 
-<!-- Open Payment -->
+    </div>
 
-<button
-id="openPaymentBtn"
-class="payment-btn">
+    <!-- Quick Amount -->
 
-<span id="paymentBtnText">
+    <div class="quick-amounts">
 
-Open Payment
+        <button
+        class="quickAmount">
 
-</span>
+            1000
 
-<div
-id="paymentLoader"
-class="btn-loader">
+        </button>
 
-</div>
+        <button
+        class="quickAmount">
 
-</button>
+            2000
 
-<!-- Flutterwave Notice -->
+        </button>
 
-<div
-id="flutterwaveNotice"
-class="coming-soon-box">
+        <button
+        class="quickAmount">
 
-<i class="fa-solid fa-clock"></i>
+            5000
 
-Flutterwave integration is coming soon.
+        </button>
 
-</div>
+        <button
+        class="quickAmount">
+
+            10000
+
+        </button>
+
+    </div>
+
+    <!-- Pay Button -->
+
+    <button
+    id="openPaymentBtn"
+    class="payment-btn">
+
+        <div
+        id="paymentLoader"
+        class="btn-loader">
+
+        </div>
+
+        <span
+        id="paymentBtnText">
+
+            PAY WITH BANK TRANSFER
+
+        </span>
+
+    </button>
+
+    <div class="secured-text">
+
+        <i class="fa-solid fa-shield-halved"></i>
+
+        Secured payment powered by DigiSphere
+
+    </div>
 
 </section>
 <!-- ===========================
-Recent Transactions
+RECENT TRANSACTIONS
 =========================== -->
 
-<section class="wallet-section">
+<section class="transactions-section">
 
-<div class="section-header">
+    <div class="section-header">
 
-<h2>Recent Transactions</h2>
+        <h2>
 
-<a href="transactions.html">
+            Recent Transactions
 
-View all
+        </h2>
 
-</a>
+        <a href="transactions.html">
 
-</div>
+            View All
 
-<div
-id="transactionsContainer"
-class="transactions-list">
+        </a>
 
-<!-- Empty State -->
+    </div>
 
-<div
-id="emptyTransactions"
-class="empty-transactions">
+    <div
+    id="transactionsContainer"
+    class="transactions-list">
 
-<div class="empty-icon">
+        <!-- Empty State -->
 
-<i class="fa-solid fa-wallet"></i>
+        <div
+        id="emptyTransactions"
+        class="empty-transactions">
 
-</div>
+            <div class="empty-icon">
 
-<h3>
+                <i class="fa-solid fa-wallet"></i>
 
-No transactions yet
+            </div>
 
-</h3>
+            <h3>
 
-<p>
+                No transactions yet
 
-Your wallet funding history will appear here after your first payment.
+            </h3>
 
-</p>
+            <p>
 
-</div>
+                Your wallet funding history will appear here.
 
-</div>
+            </p>
 
-</section>
+        </div>
 
-<!-- ===========================
-Need Help
-=========================== -->
-
-<section class="wallet-section">
-
-<div class="help-card">
-
-<div class="help-top">
-
-<div class="help-icon">
-
-<i class="fa-solid fa-headset"></i>
-
-</div>
-
-<div>
-
-<h3>
-
-Need Help?
-
-</h3>
-
-<p>
-
-Having issues funding your wallet?
-
-</p>
-
-</div>
-
-</div>
-
-<a
-href="https://wa.me/2349117412352"
-target="_blank"
-class="help-btn">
-
-<i class="fa-brands fa-whatsapp"></i>
-
-Chat on WhatsApp
-
-</a>
-
-</div>
+    </div>
 
 </section>
 
 <!-- ===========================
-Payment Popup
+PAYMENT POPUP
 =========================== -->
 
 <div
 id="paymentModal"
 class="payment-modal">
 
-<div class="payment-card">
+    <div class="payment-card">
 
-<div class="payment-header">
+        <!-- Header -->
 
-<h2>
+        <div class="payment-header">
 
-Complete Payment
+            <h2>
 
-</h2>
+                Complete your top-up
 
-<button
-id="closePaymentModal">
+            </h2>
 
-<i class="fa-solid fa-xmark"></i>
+            <button id="closePaymentModal">
 
-</button>
+                <i class="fa-solid fa-xmark"></i>
 
-</div>
+            </button>
 
-<div class="payment-body">
+        </div>
 
-<div class="payment-row">
+        <!-- Amount -->
 
-<span>
+        <div class="payment-row">
 
-Amount
+            <span>
 
-</span>
+                Amount
 
-<strong id="paymentAmount">
+            </span>
 
-₦0
+            <strong id="paymentAmount">
 
-</strong>
+                ₦0
 
-</div>
+            </strong>
 
-<div class="payment-row">
+        </div>
 
-<span>
+        <!-- Reference -->
 
-Reference
+        <div class="payment-row">
 
-</span>
+            <span>
 
-<strong id="paymentReference">
+                Reference
 
-DS000000
+            </span>
 
-</strong>
+            <strong id="paymentReference">
 
-</div>
+                DS000000
 
-<div class="payment-row">
+            </strong>
 
-<span>
+        </div>
 
-Bank
+        <!-- Bank -->
 
-</span>
+        <div class="payment-row">
 
-<strong id="paymentBank">
+            <span>
 
-PalmPay
+                Bank
 
-</strong>
+            </span>
 
-</div>
+            <strong id="paymentBank">
 
-<div class="payment-row">
+                PalmPay
 
-<span>
+            </strong>
 
-Account Name
+        </div>
 
-</span>
+        <!-- Account Name -->
 
-<strong>
+        <div class="payment-row">
 
-Ogaga Blessing Idoghe
+            <span>
 
-</strong>
+                Account Name
 
-</div>
+            </span>
 
-<div class="payment-row">
+            <strong>
 
-<span>
+                Ogaga Blessing Idoghe
 
-Account Number
+            </strong>
 
-</span>
+        </div>
 
-<strong id="paymentAccount">
+        <!-- Account Number -->
 
-9117412352
+        <div class="payment-row">
 
-</strong>
+            <span>
 
-</div>
+                Account Number
 
-<div class="payment-guide">
+            </span>
 
-<h3>
+            <strong
+            id="paymentAccount">
 
-How to Deposit
+                9117412352
 
-</h3>
+            </strong>
 
-<div class="guide-item">
+        </div>
 
-<span>1</span>
+        <!-- Copy Button -->
 
-<p>
+        <button
+        id="copyAccountBtn"
+        class="copy-btn">
 
-Transfer the exact amount to the account above.
+            <i class="fa-regular fa-copy"></i>
 
-</p>
+            Copy Account Number
 
-</div>
+        </button>
 
-<div class="guide-item">
+        <!-- Deposit Guide -->
 
-<span>2</span>
+        <div class="payment-guide">
 
-<p>
+            <h3>
 
-Use your payment reference when sending payment.
+                How to Deposit
 
-</p>
+            </h3>
 
-</div>
+            <div class="guide-item">
 
-<div class="guide-item">
+                <span>1</span>
 
-<span>3</span>
+                <p>
+                    Transfer the exact amount to the account above.
+                </p>
 
-<p>
+            </div>
 
-After payment, tap the WhatsApp button below and send your payment proof.
+            <div class="guide-item">
 
-</p>
+                <span>2</span>
 
-</div>
+                <p>
+                    Use your payment reference when making the transfer if possible.
+                </p>
 
-</div>
+            </div>
 
-<div class="payment-buttons">
+            <div class="guide-item">
 
-<button
-id="cancelPayment"
-class="cancel-btn">
+                <span>3</span>
 
-Cancel
+                <p>
+                    Take a screenshot or receipt after payment.
+                </p>
 
-</button>
+            </div>
 
-<button
-id="whatsappProof"
-class="whatsapp-btn">
+            <div class="guide-item">
 
-<i class="fa-brands fa-whatsapp"></i>
+                <span>4</span>
 
-Send Proof to WhatsApp
+                <p>
+                    Tap "Send Payment Proof to WhatsApp" below so we can verify and credit your wallet.
+                </p>
 
-</button>
+            </div>
 
-</div>
+        </div>
 
-</div>
+        <!-- Buttons -->
 
-</div>
+        <div class="payment-buttons">
+
+            <button
+            id="cancelPayment"
+            class="cancel-btn">
+
+                Cancel
+
+            </button>
+
+            <button
+            id="whatsappProof"
+            class="whatsapp-btn">
+
+                <i class="fa-brands fa-whatsapp"></i>
+
+                Send Proof
+
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
 
@@ -637,5 +756,4 @@ Send Proof to WhatsApp
 <script type="module" src="wallet.js"></script>
 
 </body>
-
 </html>
