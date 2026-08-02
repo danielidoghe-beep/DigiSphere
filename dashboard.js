@@ -1,46 +1,30 @@
 // =====================================
 // DigiSphere Dashboard
-// Part 3A
+// dashboard.js (Part 1)
 // =====================================
-
-// Firebase
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 import {
-
     getAuth,
-
     onAuthStateChanged,
-
     signOut
-
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
 import {
-
     getFirestore,
-
     doc,
-
     getDoc,
-
     onSnapshot,
-
     collection,
-
     query,
-
     where,
-
     orderBy,
-
     limit
-
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 // =====================================
-// Firebase Config
+// Firebase
 // =====================================
 
 const firebaseConfig = {
@@ -73,18 +57,6 @@ const db = getFirestore(app);
 
 const loader = document.getElementById("loader");
 
-const menuBtn = document.getElementById("menuBtn");
-
-const sidebar = document.getElementById("sidebar");
-
-const overlay = document.getElementById("overlay");
-
-const closeSidebar = document.getElementById("closeSidebar");
-
-const themeToggle = document.getElementById("themeToggle");
-
-const logoutBtn = document.getElementById("logoutBtn");
-
 const userName = document.getElementById("userName");
 
 const walletBalance = document.getElementById("walletBalance");
@@ -93,16 +65,543 @@ const purchaseCount = document.getElementById("purchaseCount");
 
 const inventoryCount = document.getElementById("inventoryCount");
 
-const inventoryInfo = document.getElementById("inventoryInfo");
+const logsCount = document.getElementById("logsCount");
 
-const avatarLetters = document.getElementById("avatarLetters");
-
-const profileImage = document.getElementById("profileImage");
+const toolsCount = document.getElementById("toolsCount");
 
 const notificationCount = document.getElementById("notificationCount");
 
+const profileAvatar = document.getElementById("profileAvatar");
+
+const sidebar = document.getElementById("sidebar");
+
+const overlay = document.getElementById("overlay");
+
+const menuBtn = document.getElementById("menuBtn");
+
+const closeSidebar = document.getElementById("closeSidebar");
+
+const logoutBtn = document.getElementById("logoutBtn");
+
 // =====================================
-// Loader
+// Loading Screen
+// =====================================
+
+window.addEventListener("load",()=>{
+
+    setTimeout(()=>{
+
+        loader.style.display="none";
+
+    },1500);
+
+});
+
+// =====================================
+// Sidebar
+// =====================================
+
+menuBtn.onclick=()=>{
+
+    sidebar.classList.add("active");
+
+    overlay.classList.add("active");
+
+}
+
+closeSidebar.onclick=()=>{
+
+    sidebar.classList.remove("active");
+
+    overlay.classList.remove("active");
+
+}
+
+overlay.onclick=()=>{
+
+    sidebar.classList.remove("active");
+
+    overlay.classList.remove("active");
+
+}
+
+// =====================================
+// User Authentication
+// =====================================
+
+let currentUser;
+
+onAuthStateChanged(auth,async(user)=>{
+
+    if(!user){
+
+        location.href="login.html";
+
+        return;
+
+    }
+
+    currentUser=user;
+
+    loadUser();
+
+    loadNotifications();
+
+    loadOrders();
+
+});
+// =====================================
+// Part 2
+// Load User Information
+// =====================================
+
+function loadUser(){
+
+    const userRef = doc(db,"users",currentUser.uid);
+
+    onSnapshot(userRef,(snapshot)=>{
+
+        if(!snapshot.exists()) return;
+
+        const data = snapshot.data();
+
+        // -------------------------
+        // Welcome Name
+        // -------------------------
+
+        userName.textContent =
+            data.firstName ||
+            data.name ||
+            currentUser.displayName ||
+            currentUser.email.split("@")[0];
+
+        // -------------------------
+        // Wallet
+        // -------------------------
+
+        walletBalance.textContent =
+            "₦" +
+            Number(data.wallet || 0)
+            .toLocaleString("en-NG");
+
+        // -------------------------
+        // Purchases
+        // -------------------------
+
+        purchaseCount.textContent =
+            Number(data.totalOrders || 0)
+            .toLocaleString("en-NG");
+
+        // -------------------------
+        // Inventory
+        // -------------------------
+
+        inventoryCount.textContent =
+            Number(data.inventory || 0)
+            .toLocaleString("en-NG");
+
+        logsCount.textContent =
+            `${data.logs || 0} Logs`;
+
+        toolsCount.textContent =
+            `${data.tools || 0} Tools`;
+
+        // -------------------------
+        // Avatar
+        // -------------------------
+
+        if(data.photo){
+
+            profileAvatar.innerHTML =
+
+            `<img src="${data.photo}"
+                  alt="Profile">`;
+
+        }
+
+        else{
+
+            let initials = "DS";
+
+            const name =
+                data.name ||
+                data.firstName ||
+                currentUser.displayName ||
+                "";
+
+            if(name){
+
+                initials = name
+                    .trim()
+                    .split(" ")
+                    .map(word=>word[0])
+                    .join("")
+                    .substring(0,2)
+                    .toUpperCase();
+
+            }
+
+            profileAvatar.textContent = initials;
+
+        }
+
+    });
+
+}
+
+// =====================================
+// Notifications
+// =====================================
+
+function loadNotifications(){
+
+    const q = query(
+
+        collection(db,"notifications"),
+
+        where("uid","==",currentUser.uid),
+
+        where("read","==",false)
+
+    );
+
+    onSnapshot(q,(snapshot)=>{
+
+        notificationCount.textContent =
+            snapshot.size;
+
+    });
+
+}
+
+// =====================================
+// Profile Click
+// =====================================
+
+profileAvatar.onclick = ()=>{
+
+    location.href="profile.html";
+
+}
+
+// =====================================
+// Notification Click
+// =====================================
+
+document
+.getElementById("notificationBtn")
+.onclick=()=>{
+
+    location.href="notifications.html";
+
+}
+// =====================================
+// Part 3
+// Recent Orders
+// =====================================
+
+const recentOrders = document.getElementById("recentOrders");
+
+function loadOrders(){
+
+    const q = query(
+
+        collection(db,"orders"),
+
+        where("uid","==",currentUser.uid),
+
+        orderBy("createdAt","desc"),
+
+        limit(5)
+
+    );
+
+    onSnapshot(q,(snapshot)=>{
+
+        recentOrders.innerHTML="";
+
+        if(snapshot.empty){
+
+            recentOrders.innerHTML=`
+
+            <div class="empty-card">
+
+                <i class="fa-solid fa-bag-shopping"></i>
+
+                <h4>No orders yet</h4>
+
+                <p>
+
+                    Your purchases will appear here once you place an order.
+
+                </p>
+
+            </div>
+
+            `;
+
+            return;
+
+        }
+
+        snapshot.forEach((docSnap)=>{
+
+            const order = docSnap.data();
+
+            const amount = Number(order.amount || 0)
+            .toLocaleString("en-NG");
+
+            const status =
+                (order.status || "Pending").toLowerCase();
+
+            recentOrders.innerHTML += `
+
+            <div class="order-card">
+
+                <div class="order-left">
+
+                    <div class="order-icon">
+
+                        <i class="fa-solid fa-box"></i>
+
+                    </div>
+
+                    <div class="order-info">
+
+                        <h4>
+
+                            ${order.productName || "Digital Product"}
+
+                        </h4>
+
+                        <p>
+
+                            ${order.category || "Purchase"}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="order-right">
+
+                    <h5>
+
+                        ₦${amount}
+
+                    </h5>
+
+                    <span class="order-status ${status}">
+
+                        ${order.status || "Pending"}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            `;
+
+        });
+
+    });
+
+}
+
+// =====================================
+// Quick Action Buttons
+// =====================================
+
+document.getElementById("buyLogs").onclick=()=>{
+
+    location.href="store.html";
+
+};
+
+document.getElementById("buyTools").onclick=()=>{
+
+    location.href="tools.html";
+
+};
+
+document.getElementById("topupWallet").onclick=()=>{
+
+    location.href="wallet.html";
+
+};
+
+document.getElementById("support").onclick=()=>{
+
+    location.href="support.html";
+
+};
+
+// =====================================
+// Logout
+// =====================================
+
+logoutBtn.onclick = async()=>{
+
+    const confirmLogout = confirm(
+
+        "Are you sure you want to logout?"
+
+    );
+
+    if(!confirmLogout) return;
+
+    try{
+
+        await signOut(auth);
+
+        location.href="login.html";
+
+    }
+
+    catch(error){
+
+        alert("Unable to logout.");
+
+        console.error(error);
+
+    }
+
+};
+// =====================================
+// Part 4
+// Theme, Support & Final Functions
+// =====================================
+
+// Theme
+
+const themeToggle = document.getElementById("themeToggle");
+
+if(localStorage.getItem("theme")==="dark"){
+
+    document.body.classList.add("dark");
+
+    themeToggle.innerHTML=`
+        <i class="fa-solid fa-sun"></i>
+    `;
+
+}
+
+themeToggle.addEventListener("click",()=>{
+
+    document.body.classList.toggle("dark");
+
+    if(document.body.classList.contains("dark")){
+
+        localStorage.setItem("theme","dark");
+
+        themeToggle.innerHTML=`
+            <i class="fa-solid fa-sun"></i>
+        `;
+
+    }
+
+    else{
+
+        localStorage.setItem("theme","light");
+
+        themeToggle.innerHTML=`
+            <i class="fa-solid fa-moon"></i>
+        `;
+
+    }
+
+});
+
+// =====================================
+// Support
+// =====================================
+
+// CHANGE THESE TO YOUR DETAILS
+
+const whatsappNumber="2348000000000";
+
+const telegramUsername="DigiSphere";
+
+const supportEmail="support@digisphere.com";
+
+// WhatsApp
+
+document
+.getElementById("whatsappBtn")
+.addEventListener("click",(e)=>{
+
+    e.preventDefault();
+
+    window.open(
+
+        `https://wa.me/${whatsappNumber}`,
+
+        "_blank"
+
+    );
+
+});
+
+// Telegram
+
+document
+.getElementById("telegramBtn")
+.addEventListener("click",(e)=>{
+
+    e.preventDefault();
+
+    window.open(
+
+        `https://t.me/${telegramUsername}`,
+
+        "_blank"
+
+    );
+
+});
+
+// Email
+
+document
+.getElementById("supportEmail")
+.textContent=supportEmail;
+
+// =====================================
+// Auto Close Sidebar
+// =====================================
+
+document
+.querySelectorAll(".sidebar-links a")
+.forEach(link=>{
+
+    link.addEventListener("click",()=>{
+
+        sidebar.classList.remove("active");
+
+        overlay.classList.remove("active");
+
+    });
+
+});
+
+// =====================================
+// Refresh Dashboard Every Minute
+// =====================================
+
+setInterval(()=>{
+
+    if(currentUser){
+
+        loadNotifications();
+
+    }
+
+},60000);
+
+// =====================================
+// Finished Loading
 // =====================================
 
 window.addEventListener("load",()=>{
@@ -121,588 +620,4 @@ window.addEventListener("load",()=>{
 
 });
 
-// =====================================
-// Sidebar
-// =====================================
-
-menuBtn.onclick=()=>{
-
-    sidebar.classList.add("active");
-
-    overlay.classList.add("active");
-
-};
-
-closeSidebar.onclick=()=>{
-
-    sidebar.classList.remove("active");
-
-    overlay.classList.remove("active");
-
-};
-
-overlay.onclick=()=>{
-
-    sidebar.classList.remove("active");
-
-    overlay.classList.remove("active");
-
-};
-
-// =====================================
-// Theme
-// =====================================
-
-if(localStorage.getItem("theme")==="dark"){
-
-    document.body.classList.add("dark");
-
-}
-
-themeToggle.onclick=()=>{
-
-    document.body.classList.toggle("dark");
-
-    if(document.body.classList.contains("dark")){
-
-        localStorage.setItem("theme","dark");
-
-    }else{
-
-        localStorage.setItem("theme","light");
-
-    }
-
-};
-
-// =====================================
-// Auth
-// =====================================
-
-onAuthStateChanged(auth,async(user)=>{
-
-    if(!user){
-
-        location.href="login.html";
-
-        return;
-
-    }
-
-    loadUser(user);
-
-});
-
-// =====================================
-// User
-// =====================================
-
-async function loadUser(user){
-
-    const ref=doc(db,"users",user.uid);
-
-    const snap=await getDoc(ref);
-
-    if(!snap.exists()) return;
-
-    const data=snap.data();
-
-    userName.textContent=data.name || "User";
-
-    walletBalance.textContent="₦"+Number(data.wallet || 0).toLocaleString("en-NG");
-
-    purchaseCount.textContent=data.totalOrders || 0;
-
-    inventoryCount.textContent=data.inventory || 0;
-
-    inventoryInfo.textContent=`${data.activeInventory || 0} Active • ${data.expiredInventory || 0} Expired`;
-
-    if(data.photo){
-
-        profileImage.src=data.photo;
-
-        profileImage.hidden=false;
-
-        avatarLetters.style.display="none";
-
-    }else{
-
-        let initials="DS";
-
-        if(data.name){
-
-            initials=data.name.split(" ").map(n=>n[0]).join("").toUpperCase();
-
-        }
-
-        avatarLetters.textContent=initials;
-
-    }
-
-}
-// =====================================
-// Part 3B
-// Realtime Dashboard Data
-// =====================================
-
-const recentOrders = document.getElementById("recentOrders");
-
-const quickActions = document.getElementById("quickActions");
-
-const comingSoon = document.getElementById("comingSoon");
-
-let currentUser = null;
-
-// =====================================
-// Auth State
-// =====================================
-
-onAuthStateChanged(auth,(user)=>{
-
-    if(!user){
-
-        location.href="login.html";
-
-        return;
-
-    }
-
-    currentUser=user;
-
-    loadRealtimeData(user.uid);
-
-});
-
-// =====================================
-// Realtime User Data
-// =====================================
-
-function loadRealtimeData(uid){
-
-    onSnapshot(doc(db,"users",uid),(docSnap)=>{
-
-        if(!docSnap.exists()) return;
-
-        const data=docSnap.data();
-
-        userName.textContent=data.name || "User";
-
-        walletBalance.textContent="₦"+Number(data.wallet || 0).toLocaleString("en-NG");
-
-        purchaseCount.textContent=Number(data.totalOrders || 0).toLocaleString();
-
-        inventoryCount.textContent=Number(data.inventory || 0).toLocaleString();
-
-        inventoryInfo.textContent=
-        `${data.activeInventory || 0} Active • ${data.expiredInventory || 0} Expired`;
-
-    });
-
-    loadNotifications(uid);
-
-    loadOrders(uid);
-
-    loadQuickActions();
-
-    loadComingSoon();
-
-}
-
-// =====================================
-// Notifications
-// =====================================
-
-function loadNotifications(uid){
-
-    const q=query(
-
-        collection(db,"notifications"),
-
-        where("uid","==",uid),
-
-        where("read","==",false)
-
-    );
-
-    onSnapshot(q,(snapshot)=>{
-
-        notificationCount.textContent=snapshot.size;
-
-    });
-
-}
-
-// =====================================
-// Recent Orders
-// =====================================
-
-function loadOrders(uid){
-
-    const q=query(
-
-        collection(db,"orders"),
-
-        where("uid","==",uid),
-
-        orderBy("createdAt","desc"),
-
-        limit(5)
-
-    );
-
-    onSnapshot(q,(snapshot)=>{
-
-        recentOrders.innerHTML="";
-
-        if(snapshot.empty){
-
-            recentOrders.innerHTML=`
-
-            <div class="empty-orders">
-
-                <i class="fa-solid fa-bag-shopping"></i>
-
-                <h4>No Orders Yet</h4>
-
-                <p>Your recent purchases will appear here.</p>
-
-            </div>
-
-            `;
-
-            return;
-
-        }
-
-        snapshot.forEach((doc)=>{
-
-            const order=doc.data();
-
-            recentOrders.innerHTML+=`
-
-            <div class="quick-card">
-
-                <div class="quick-icon"
-                style="background:#edf7df;color:#5d7c1f;">
-
-                    <i class="fa-solid fa-box"></i>
-
-                </div>
-
-                <div>
-
-                    <h4>${order.productName || "Product"}</h4>
-
-                    <p>
-
-                        ₦${Number(order.amount || 0).toLocaleString("en-NG")}
-
-                    </p>
-
-                </div>
-
-            </div>
-
-            `;
-
-        });
-
-    });
-
-}
-
-// =====================================
-// Quick Actions
-// =====================================
-
-function loadQuickActions(){
-
-    quickActions.innerHTML=`
-
-    <div class="quick-card">
-
-        <div class="quick-icon"
-        style="background:#EAF3FF;color:#3578E5;">
-
-            <i class="fa-solid fa-cube"></i>
-
-        </div>
-
-        <div>
-
-            <h4>Browse Store</h4>
-
-            <p>Explore digital products.</p>
-
-        </div>
-
-    </div>
-
-    <div class="quick-card">
-
-        <div class="quick-icon"
-        style="background:#F4ECFF;color:#8B5CF6;">
-
-            <i class="fa-solid fa-screwdriver-wrench"></i>
-
-        </div>
-
-        <div>
-
-            <h4>Services</h4>
-
-            <p>Manage available services.</p>
-
-        </div>
-
-    </div>
-
-    <div class="quick-card">
-
-        <div class="quick-icon"
-        style="background:#EAF9EE;color:#22A559;">
-
-            <i class="fa-solid fa-wallet"></i>
-
-        </div>
-
-        <div>
-
-            <h4>Fund Wallet</h4>
-
-            <p>Add money to your wallet.</p>
-
-        </div>
-
-    </div>
-
-    <div class="quick-card">
-
-        <div class="quick-icon"
-        style="background:#FFF2E7;color:#F97316;">
-
-            <i class="fa-solid fa-headset"></i>
-
-        </div>
-
-        <div>
-
-            <h4>Support</h4>
-
-            <p>Get help from DigiSphere.</p>
-
-        </div>
-
-    </div>
-
-    `;
-
-}
-
-// =====================================
-// Coming Soon
-// =====================================
-
-function loadComingSoon(){
-
-    comingSoon.innerHTML=`
-
-    <div class="soon-item">
-
-        <div class="soon-left">
-
-            <i class="fa-solid fa-gift"></i>
-
-            <span>Rewards</span>
-
-        </div>
-
-        <span class="soon-badge">
-
-            Soon
-
-        </span>
-
-    </div>
-
-    <div class="soon-item">
-
-        <div class="soon-left">
-
-            <i class="fa-solid fa-users"></i>
-
-            <span>Referral Program</span>
-
-        </div>
-
-        <span class="soon-badge">
-
-            Soon
-
-        </span>
-
-    </div>
-
-    `;
-
-}
-// =====================================
-// Part 3C
-// Buttons, Logout & Navigation
-// =====================================
-
-const addFundsBtn = document.getElementById("addFundsBtn");
-
-const viewOrdersBtn = document.getElementById("viewOrdersBtn");
-
-const supportBtn = document.getElementById("supportBtn");
-
-const emailBtn = document.getElementById("emailBtn");
-
-// ==============================
-// Wallet
-// ==============================
-
-addFundsBtn.addEventListener("click",()=>{
-
-    window.location.href="wallet.html";
-
-});
-
-// ==============================
-// Orders
-// ==============================
-
-viewOrdersBtn.addEventListener("click",()=>{
-
-    window.location.href="orders.html";
-
-});
-
-// ==============================
-// WhatsApp Support
-// ==============================
-
-// Replace with your WhatsApp number
-const WHATSAPP_NUMBER="234XXXXXXXXXX";
-
-supportBtn.addEventListener("click",()=>{
-
-    const message=encodeURIComponent(
-        "Hello DigiSphere Support, I need assistance."
-    );
-
-    window.open(
-        `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`,
-        "_blank"
-    );
-
-});
-
-// ==============================
-// Email Support
-// ==============================
-
-emailBtn.addEventListener("click",()=>{
-
-    window.location.href=
-    "mailto:support@digisphere.com";
-
-});
-
-// ==============================
-// Logout
-// ==============================
-
-logoutBtn.addEventListener("click",async()=>{
-
-    const answer=confirm(
-        "Are you sure you want to logout?"
-    );
-
-    if(!answer) return;
-
-    try{
-
-        await signOut(auth);
-
-        location.href="login.html";
-
-    }catch(error){
-
-        alert("Unable to logout.");
-
-    }
-
-});
-
-// ==============================
-// Avatar Click
-// ==============================
-
-document
-.getElementById("userAvatar")
-.addEventListener("click",()=>{
-
-    location.href="profile.html";
-
-});
-
-// ==============================
-// Notification Click
-// ==============================
-
-document
-.getElementById("notificationBtn")
-.addEventListener("click",()=>{
-
-    location.href="notifications.html";
-
-});
-
-// ==============================
-// Sidebar Links
-// ==============================
-
-document.querySelectorAll(".sidebar a").forEach(link=>{
-
-    link.addEventListener("click",()=>{
-
-        sidebar.classList.remove("active");
-
-        overlay.classList.remove("active");
-
-    });
-
-});
-
-// ==============================
-// Loading Complete
-// ==============================
-
-setTimeout(()=>{
-
-    loader.style.opacity="0";
-
-    setTimeout(()=>{
-
-        loader.style.display="none";
-
-    },300);
-
-},1500);
-
-// ==============================
-// Auto Refresh Time
-// ==============================
-
-setInterval(()=>{
-
-    const today=new Date();
-
-    console.log(
-        "Dashboard Synced:",
-        today.toLocaleTimeString()
-    );
-
-},60000);
+console.log("DigiSphere Dashboard Loaded Successfully");
