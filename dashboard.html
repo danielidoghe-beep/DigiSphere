@@ -119,82 +119,58 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <div class="dashboard">
 
-    <!-- Top Navigation -->
+    <!-- ==========================
+         TOP BAR
+    =========================== -->
 
     <header class="topbar">
 
         <button id="menuBtn" class="icon-btn">
-
             <i class="fa-regular fa-window-maximize"></i>
-
         </button>
 
-        <div class="top-right">
-
-            <!-- Wallet Pill -->
+        <div class="top-actions">
 
             <button class="wallet-pill">
-
-                <span>₦</span>
-
-                <span id="topWallet">
-
-                    0
-
-                </span>
-
+                <span class="naira">₦</span>
+                <span id="topWallet">0</span>
             </button>
 
-            <!-- Theme -->
-
-            <button
-            id="themeToggle"
-            class="icon-btn">
-
+            <button id="themeToggle" class="icon-btn">
                 <i class="fa-regular fa-sun"></i>
-
             </button>
-
-            <!-- Notification -->
 
             <button class="icon-btn notification-btn">
 
                 <i class="fa-regular fa-bell"></i>
 
                 <span
-                id="notificationCount"
-                class="notification-badge">
-
+                    id="notificationCount"
+                    class="notification-badge">
                 </span>
 
             </button>
 
-            <!-- Avatar -->
-
-            <div
-            id="userAvatar"
-            class="avatar">
-
+            <div id="userAvatar" class="avatar">
                 DD
-
             </div>
 
         </div>
 
     </header>
 
-    <!-- Welcome -->
+    <!-- ==========================
+         WELCOME
+    =========================== -->
 
-    <section class="welcome">
+    <section class="welcome-section">
 
         <h1>
 
             Welcome back,
 
             <span id="userName">
-
                 Loading...
-
             </span>
 
             👋
@@ -202,31 +178,25 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         </h1>
 
         <p>
-
             Here's what's going on with your account
-
         </p>
 
     </section>
 
-    <!-- Cards -->
+    <!-- ==========================
+         SUMMARY CARDS
+    =========================== -->
 
-    <section class="summary-cards">
+    <section class="summary-section">
 
         <!-- Wallet -->
 
         <div class="summary-card">
 
-            <small>
-
-                Wallet balance
-
-            </small>
+            <small>Wallet balance</small>
 
             <h2 id="walletBalance">
-
                 ₦0
-
             </h2>
 
             <a href="wallet.html">
@@ -243,16 +213,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
         <div class="summary-card">
 
-            <small>
-
-                Total purchases
-
-            </small>
+            <small>Total purchases</small>
 
             <h2 id="purchaseCount">
-
                 0
-
             </h2>
 
             <a href="orders.html">
@@ -267,35 +231,258 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
         <!-- Inventory -->
 
-        <div class="summary-card wallet-card">
+        <div class="summary-card">
 
-            <small>
-
-                Available inventory
-
-            </small>
+            <small>Available inventory</small>
 
             <h2 id="inventoryCount">
-
                 0
-
             </h2>
 
             <p id="inventoryBreakdown">
-
-                0 logs · 0 tools
-
+                0 Logs · 0 Tools
             </p>
+
+        </div>
+
+    </section>
+        <!-- ==========================
+         QUICK ACTIONS
+    =========================== -->
+
+    <section class="quick-section">
+
+        <h3>Quick actions</h3>
+
+        <!-- Buy Logs -->
+
+        <a href="logs.html" class="action-card">
+
+            <div class="action-icon blue">
+
+                <i class="fa-solid fa-cube"></i>
+
+            </div>
+
+            <div class="action-text">
+
+                <h4>Buy Logs</h4>
+
+                <p>
+                    Social media accounts, VPNs, proxies, etc.
+                </p>
+
+            </div>
+
+        </a>
+
+        <!-- Buy Tools -->
+
+        <a href="tools.html" class="action-card">
+
+            <div class="action-icon purple">
+
+                <i class="fa-solid fa-wrench"></i>
+
+            </div>
+
+            <div class="action-text">
+
+                <h4>Buy Tools</h4>
+
+                <p>
+                    Updates &amp; pictures
+                </p>
+
+            </div>
+
+        </a>
+
+        <!-- Wallet -->
+
+        <a href="wallet.html" class="action-card">
+
+            <div class="action-icon green">
+
+                <i class="fa-regular fa-wallet"></i>
+
+            </div>
+
+            <div class="action-text">
+
+                <h4>Top Up Wallet</h4>
+
+                <p>
+                    Add funds to your balance
+                </p>
+
+            </div>
+
+        </a>
+
+        <!-- Support -->
+
+        <a href="support.html" class="action-card">
+
+            <div class="action-icon orange">
+
+                <i class="fa-solid fa-headset"></i>
+
+            </div>
+
+            <div class="action-text">
+
+                <h4>Get Support</h4>
+
+                <p>
+                    Open a support ticket
+                </p>
+
+            </div>
+
+        </a>
+
+    </section>
+        <!-- ==========================
+         RECENT ORDERS
+    =========================== -->
+
+    <section class="orders-section">
+
+        <div class="section-header">
+
+            <h3>Recent orders</h3>
+
+            <a href="orders.html">
+                View all
+            </a>
+
+        </div>
+
+        <div id="recentOrders" class="orders-card">
+
+            <!-- Firebase will replace this -->
+
+            <div class="empty-orders">
+
+                <i class="fa-regular fa-bag-shopping"></i>
+
+                <h4>No orders yet</h4>
+
+                <p>
+                    Your purchases will appear here
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ==========================
+         COMING SOON
+    =========================== -->
+
+    <section class="coming-section">
+
+        <h3>Coming soon</h3>
+
+        <div class="coming-item">
+
+            <div class="coming-left">
+
+                <div class="coming-icon">
+
+                    <i class="fa-regular fa-message"></i>
+
+                </div>
+
+                <span>SMS Numbers</span>
+
+            </div>
+
+            <span class="soon-badge">
+
+                Soon
+
+            </span>
+
+        </div>
+
+        <div class="coming-item">
+
+            <div class="coming-left">
+
+                <div class="coming-icon">
+
+                    <i class="fa-solid fa-bolt"></i>
+
+                </div>
+
+                <span>SME Boosting</span>
+
+            </div>
+
+            <span class="soon-badge">
+
+                Soon
+
+            </span>
+
+        </div>
+
+    </section>
+
+    <!-- ==========================
+         HELP
+    =========================== -->
+
+    <section class="help-card">
+
+        <h2>
+
+            Need quick help?
+
+        </h2>
+
+        <p>
+
+            Reach support directly if you want a faster response outside tickets.
+
+        </p>
+
+        <a
+            href="https://wa.me/YOURNUMBER"
+            class="help-btn whatsapp">
+
+            <i class="fa-brands fa-whatsapp"></i>
+
+            Chat on WhatsApp
+
+        </a>
+
+        <a
+            href="https://t.me/YOURUSERNAME"
+            class="help-btn telegram">
+
+            <i class="fa-brands fa-telegram"></i>
+
+            Open Telegram
+
+        </a>
+
+        <div class="support-email">
+
+            <i class="fa-regular fa-envelope"></i>
+
+            <span>
+
+                support@digisphere.com
+
+            </span>
 
         </div>
 
     </section>
 
 </div>
-
-<script src="theme.js"></script>
-
-<script type="module" src="dashboard.js"></script>
-
-</body>
-</html>
