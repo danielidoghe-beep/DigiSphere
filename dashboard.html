@@ -1,20 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+<title>Dashboard | DigiSphere</title>
 
-    <title>Dashboard | DigiSphere</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="dashboard.css">
 
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="dashboard.css">
-
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
 </head>
 
@@ -30,7 +27,7 @@
 
 </div>
 
-<!-- Sidebar Overlay -->
+<!-- Overlay -->
 
 <div id="overlay"></div>
 
@@ -40,7 +37,13 @@
 
     <div class="sidebar-header">
 
-        <h2>DigiSphere</h2>
+        <div class="logo">
+
+            <i class="fa-solid fa-layer-group"></i>
+
+            <span>DigiSphere</span>
+
+        </div>
 
         <button id="closeSidebar">
 
@@ -50,7 +53,7 @@
 
     </div>
 
-    <div class="sidebar-links">
+    <nav>
 
         <a href="dashboard.html">
 
@@ -84,6 +87,14 @@
 
         </a>
 
+        <a href="support.html">
+
+            <i class="fa-solid fa-headset"></i>
+
+            Support
+
+        </a>
+
         <a href="profile.html">
 
             <i class="fa-solid fa-user"></i>
@@ -100,50 +111,79 @@
 
         </a>
 
-    </div>
+    </nav>
 
 </aside>
 
-<!-- Top Navigation -->
+<!-- Main -->
 
-<header class="topbar">
+<div class="dashboard">
 
-    <button id="menuBtn">
+    <!-- Top Navigation -->
 
-        <i class="fa-solid fa-bars"></i>
+    <header class="topbar">
 
-    </button>
+        <button id="menuBtn" class="icon-btn">
 
-    <button id="themeToggle"
-            class="theme-toggle">
+            <i class="fa-regular fa-window-maximize"></i>
 
-        <i class="fa-solid fa-moon"></i>
+        </button>
 
-    </button>
+        <div class="top-right">
 
-    <button id="notificationBtn"
-            class="notification-btn">
+            <!-- Wallet Pill -->
 
-        <i class="fa-regular fa-bell"></i>
+            <button class="wallet-pill">
 
-        <span id="notificationCount">
-            0
-        </span>
+                <span>₦</span>
 
-    </button>
+                <span id="topWallet">
 
-    <div class="profile-avatar"
-         id="profileAvatar">
+                    0
 
-        DD
+                </span>
 
-    </div>
+            </button>
 
-</header>
+            <!-- Theme -->
 
-<main class="dashboard">
+            <button
+            id="themeToggle"
+            class="icon-btn">
 
-    <!-- Welcome Section -->
+                <i class="fa-regular fa-sun"></i>
+
+            </button>
+
+            <!-- Notification -->
+
+            <button class="icon-btn notification-btn">
+
+                <i class="fa-regular fa-bell"></i>
+
+                <span
+                id="notificationCount"
+                class="notification-badge">
+
+                </span>
+
+            </button>
+
+            <!-- Avatar -->
+
+            <div
+            id="userAvatar"
+            class="avatar">
+
+                DD
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- Welcome -->
 
     <section class="welcome">
 
@@ -168,368 +208,94 @@
         </p>
 
     </section>
-        <!-- Wallet Card -->
 
-    <section class="summary-card wallet-card">
+    <!-- Cards -->
 
-        <p class="card-label">
+    <section class="summary-cards">
 
-            Wallet balance
+        <!-- Wallet -->
 
-        </p>
+        <div class="summary-card">
 
-        <h2 id="walletBalance">
+            <small>
 
-            ₦0
+                Wallet balance
 
-        </h2>
+            </small>
 
-        <a href="wallet.html" class="card-link">
+            <h2 id="walletBalance">
 
-            View history
+                ₦0
 
-            <i class="fa-solid fa-arrow-right"></i>
+            </h2>
 
-        </a>
+            <a href="wallet.html">
 
-    </section>
+                View history
 
-    <!-- Purchases Card -->
-
-    <section class="summary-card">
-
-        <p class="card-label">
-
-            Total purchases
-
-        </p>
-
-        <h2 id="purchaseCount">
-
-            0
-
-        </h2>
-
-        <a href="orders.html" class="card-link">
-
-            View orders
-
-            <i class="fa-solid fa-arrow-right"></i>
-
-        </a>
-
-    </section>
-
-    <!-- Inventory Card -->
-
-    <section class="summary-card">
-
-        <p class="card-label">
-
-            Available inventory
-
-        </p>
-
-        <h2 id="inventoryCount">
-
-            0
-
-        </h2>
-
-        <p class="inventory-details">
-
-            <span id="logsCount">
-
-                0 logs
-
-            </span>
-
-            •
-
-            <span id="toolsCount">
-
-                0 tools
-
-            </span>
-
-        </p>
-
-    </section>
-
-    <!-- Quick Actions -->
-
-    <section class="section">
-
-        <h3>
-
-            Quick actions
-
-        </h3>
-
-        <div class="action-card"
-             id="buyLogs">
-
-            <div class="action-icon blue">
-
-                <i class="fa-solid fa-cube"></i>
-
-            </div>
-
-            <div>
-
-                <h4>
-
-                    Buy Logs
-
-                </h4>
-
-                <p>
-
-                    Social media accounts, VPNs, proxies, etc.
-
-                </p>
-
-            </div>
-
-        </div>
-
-        <div class="action-card"
-             id="buyTools">
-
-            <div class="action-icon purple">
-
-                <i class="fa-solid fa-wrench"></i>
-
-            </div>
-
-            <div>
-
-                <h4>
-
-                    Buy Tools
-
-                </h4>
-
-                <p>
-
-                    Updates & pictures
-
-                </p>
-
-            </div>
-
-        </div>
-
-        <div class="action-card"
-             id="topupWallet">
-
-            <div class="action-icon green">
-
-                <i class="fa-solid fa-wallet"></i>
-
-            </div>
-
-            <div>
-
-                <h4>
-
-                    Top Up Wallet
-
-                </h4>
-
-                <p>
-
-                    Add funds to your balance
-
-                </p>
-
-            </div>
-
-        </div>
-
-        <div class="action-card"
-             id="support">
-
-            <div class="action-icon orange">
-
-                <i class="fa-solid fa-headset"></i>
-
-            </div>
-
-            <div>
-
-                <h4>
-
-                    Get Support
-
-                </h4>
-
-                <p>
-
-                    Open a support ticket
-
-                </p>
-
-            </div>
-
-        </div>
-
-    </section>
-        <!-- Recent Orders -->
-
-    <section class="section">
-
-        <div class="section-header">
-
-            <h3>Recent orders</h3>
-
-            <a href="orders.html">
-
-                View all
+                <i class="fa-solid fa-arrow-right"></i>
 
             </a>
 
         </div>
 
-        <div id="recentOrders">
+        <!-- Purchases -->
 
-            <div class="empty-card">
+        <div class="summary-card">
 
-                <i class="fa-solid fa-bag-shopping"></i>
+            <small>
 
-                <h4>No orders yet</h4>
+                Total purchases
 
-                <p>
+            </small>
 
-                    Your purchases will appear here
+            <h2 id="purchaseCount">
 
-                </p>
+                0
 
-            </div>
+            </h2>
+
+            <a href="orders.html">
+
+                View orders
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+        </div>
+
+        <!-- Inventory -->
+
+        <div class="summary-card">
+
+            <small>
+
+                Available inventory
+
+            </small>
+
+            <h2 id="inventoryCount">
+
+                0
+
+            </h2>
+
+            <p id="inventoryBreakdown">
+
+                0 logs · 0 tools
+
+            </p>
 
         </div>
 
     </section>
 
-    <!-- Coming Soon -->
-
-    <section class="section">
-
-        <h3>
-
-            Coming soon
-
-        </h3>
-
-        <div class="coming-item">
-
-            <div class="coming-left">
-
-                <div class="coming-icon">
-
-                    <i class="fa-regular fa-message"></i>
-
-                </div>
-
-                <span>
-
-                    SMS Numbers
-
-                </span>
-
-            </div>
-
-            <span class="soon-badge">
-
-                Soon
-
-            </span>
-
-        </div>
-
-        <div class="coming-item">
-
-            <div class="coming-left">
-
-                <div class="coming-icon">
-
-                    <i class="fa-solid fa-bolt"></i>
-
-                </div>
-
-                <span>
-
-                    SME Boosting
-
-                </span>
-
-            </div>
-
-            <span class="soon-badge">
-
-                Soon
-
-            </span>
-
-        </div>
-
-    </section>
-
-    <!-- Help Section -->
-
-    <section class="help-card">
-
-        <h3>
-
-            Need quick help?
-
-        </h3>
-
-        <p>
-
-            Reach support directly if you want a faster response outside tickets.
-
-        </p>
-
-        <a href="#"
-           id="whatsappBtn"
-           class="help-btn primary">
-
-            <i class="fa-brands fa-whatsapp"></i>
-
-            Chat on WhatsApp
-
-        </a>
-
-        <a href="#"
-           id="telegramBtn"
-           class="help-btn secondary">
-
-            <i class="fa-brands fa-telegram"></i>
-
-            Open Telegram
-
-        </a>
-
-        <div class="support-email">
-
-            <i class="fa-regular fa-envelope"></i>
-
-            <span id="supportEmail">
-
-                support@digisphere.com
-
-            </span>
-
-        </div>
-
-    </section>
-
-</main>
+</div>
 
 <script src="theme.js"></script>
+
 <script type="module" src="dashboard.js"></script>
 
 </body>
-
 </html>
