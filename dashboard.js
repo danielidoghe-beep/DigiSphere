@@ -13,9 +13,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const firebaseConfig = {
-
-    // Paste your Firebase config here
-
+  apiKey: "AIzaSyDnpsEIlXwPLSCJAGMS7feM2JMhmxzCCfs",
+  authDomain: "digisphere-66fdf.firebaseapp.com",
+  projectId: "digisphere-66fdf",
+  storageBucket: "digisphere-66fdf.firebasestorage.app",
+  messagingSenderId: "834194884246",
+  appId: "1:834194884246:web:72672ca253c3d7dd9d24b7",
+  measurementId: "G-19QS4036V7"
 };
 
 const app = initializeApp(firebaseConfig);
