@@ -754,6 +754,67 @@ class="payment-modal">
 <script src="theme.js"></script>
 
 <script type="module" src="wallet.js"></script>
+<script>
+// 1. FORCE HIDE LOADER - This was the main bug
+window.addEventListener("load", function() {
+  setTimeout(() => {
+    document.getElementById("loader").style.display = "none";
+  }, 800); // hide after 0.8s
+});
 
+// 2. MENU BUTTON - open/close sidebar
+document.getElementById("menuBtn").addEventListener("click", () => {
+  document.getElementById("sidebar").classList.add("active");
+  document.getElementById("overlay").style.display = "block";
+});
+document.getElementById("closeSidebar").addEventListener("click", () => {
+  document.getElementById("sidebar").classList.remove("active");
+  document.getElementById("overlay").style.display = "none";
+});
+
+// 3. LOGOUT
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  localStorage.clear();
+  window.location.href = "index.html";
+});
+
+// 4. LOAD USER BALANCE SAFELY
+let user = JSON.parse(localStorage.getItem("user"));
+if(!user) {
+  // If no user, send back to login
+  window.location.href = "index.html";
+} else {
+  // Update balance safely
+  document.getElementById("walletBalance").innerText = "₦" + (user.balance || 0);
+  document.getElementById("topWallet").innerText = user.balance || 0;
+}
+
+// 5. QUICK AMOUNT BUTTONS
+document.querySelectorAll(".quickAmount").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.getElementById("depositAmount").value = btn.innerText;
+  });
+});
+
+// 6. PAYMENT MODAL
+document.getElementById("openPaymentBtn").addEventListener("click", () => {
+  let amount = parseInt(document.getElementById("depositAmount").value);
+  if(amount < 1000) {
+    document.getElementById("amountError").style.display = "block";
+    return;
+  }
+  document.getElementById("amountError").style.display = "none";
+  document.getElementById("paymentAmount").innerText = "₦" + amount;
+  document.getElementById("paymentReference").innerText = "DS" + Date.now();
+  document.getElementById("paymentModal").style.display = "flex";
+});
+
+document.getElementById("closePaymentModal").addEventListener("click", () => {
+  document.getElementById("paymentModal").style.display = "none";
+});
+document.getElementById("cancelPayment").addEventListener("click", () => {
+  document.getElementById("paymentModal").style.display = "none";
+});
+</script>
 </body>
 </html>
